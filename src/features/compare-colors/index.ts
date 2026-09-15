@@ -1,0 +1,1 @@
+export { CompareColorsPage } from "./CompareColorsPage";

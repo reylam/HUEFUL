@@ -1,0 +1,1 @@
+export { SavedColorsPage } from "./SavedColorsPage";

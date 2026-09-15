@@ -1,0 +1,44 @@
+import type { RgbColor } from "./types";
+
+const clamp = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, value));
+
+export function clampRgb({ r, g, b }: RgbColor): RgbColor {
+  return {
+    r: Math.round(clamp(r, 0, 255)),
+    g: Math.round(clamp(g, 0, 255)),
+    b: Math.round(clamp(b, 0, 255)),
+  };
+}
+
+export function rgbToHex(rgb: RgbColor): string {
+  const { r, g, b } = clampRgb(rgb);
+  const toHex = (n: number) => n.toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+export function hexToRgb(hex: string): RgbColor | null {
+  const normalized = hex.replace("#", "").trim();
+  const full =
+    normalized.length === 3
+      ? normalized
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : normalized;
+  if (!/^[0-9a-fA-F]{6}$/.test(full)) return null;
+  return {
+    r: parseInt(full.slice(0, 2), 16),
+    g: parseInt(full.slice(2, 4), 16),
+    b: parseInt(full.slice(4, 6), 16),
+  };
+}
+
+/** WCAG relative luminance (0 = black, 1 = white). */
+export function relativeLuminance({ r, g, b }: RgbColor): number {
+  const channel = (value: number) => {
+    const s = value / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}

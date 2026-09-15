@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/*
+  Design tokens for all_eyes. CVD-safe by construction:
+  - status colors are separated by LUMINANCE, not only hue, so they stay
+    distinguishable under any color vision deficiency (and in grayscale).
+  - every status also gets paired with a text label + icon in the UI; color
+    is never the only signal (see the design-system reference).
+  Dark theme is the default because the tool is often used outdoors and a dark
+  UI keeps captured colors readable.
+*/
+
+@theme {
+  /* surfaces & text */
+  --color-surface: #0b0f14;
+  --color-surface-raised: #151b23;
+  --color-surface-sunken: #070a0e;
+  --color-border: #2a333d;
+  --color-text: #f4f7fa;
+  --color-text-muted: #a7b2be;
+
+  /*
+    Brand palette derived from the mascot: warm amber + blue on a charcoal/white
+    body. Amber and blue differ on the blue-yellow axis (preserved under
+    red-green CVD) AND in luminance, so the pairing survives every deficiency
+    and grayscale. Amber is the primary action; blue is the informational accent.
+  */
+  --color-primary: #f5a623;
+  --color-primary-foreground: #1a1205;
+
+  /* secondary / informational accent: the mascot's blue */
+  --color-accent: #3b82f6;
+  --color-accent-foreground: #04101f;
+
+  /* focus ring: high contrast blue, distinct from the amber primary, never removed */
+  --color-focus: #7dd3fc;
+
+  /*
+    Status scale: a bright -> dark LUMINANCE spread so the steps are separable
+    without relying on hue (holds under any CVD and in grayscale). Each status
+    is always paired with an icon + text label in components, never used alone.
+    Note these are semantic status colors, intentionally kept off the amber
+    brand hue so "ripe" never reads as a primary button.
+      ripe     = bright yellow-green   (highest luminance)
+      unripe   = mid teal-green
+      overripe = dark brown            (lowest luminance)
+  */
+  --color-status-ripe: #d9e021;
+  --color-status-unripe: #2dd4bf;
+  --color-status-overripe: #78350f;
+  --color-status-warning: #f5a623;
+  --color-status-danger: #f43f5e;
+  --color-status-uncertain: #94a3b8;
+
+  /* radii & typography */
+  --radius-card: 1rem;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  /* >=16px base avoids mobile zoom-on-focus and helps low vision */
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  /* respect notches / home indicators on phones */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* Visible focus is a hard requirement, not a default we override. */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/*
+  Subtle page-in transition used by <PageTransition/>. A short fade + rise so
+  navigation feels like an app. Kept in CSS (near-zero weight) instead of a JS
+  animation library. Disabled by the reduced-motion block below.
+*/
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-in {
+  animation: page-in 0.18s ease-out both;
+}
+
+/* Honor reduced-motion: drop non-essential animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

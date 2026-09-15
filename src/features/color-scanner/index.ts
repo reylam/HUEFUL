@@ -1,0 +1,1 @@
+export { ColorScannerPage } from "./ColorScannerPage";
