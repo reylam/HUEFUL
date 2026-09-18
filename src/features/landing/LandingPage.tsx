@@ -1,6 +1,13 @@
+import type { ComponentType } from "react";
 import { Link } from "react-router-dom";
 import { ScanLine, GitCompare, Shirt, Apple, Eye, Bookmark } from "lucide-react";
-import mascot from "@/assets/images/mascot.png";
+import { ContainerScroll } from "@/shared/ui/ContainerScroll";
+import { AnimatedTabs } from "@/shared/ui/AnimatedTabs";
+import { ScrollReveal } from "@/shared/ui/ScrollReveal";
+import { WavyBackground } from "@/shared/ui/WavyBackground";
+import { HeroCentered } from "./components/HeroCentered";
+import { LiveColorDemo } from "./components/LiveColorDemo";
+import { useLandingReveal } from "./hooks/useLandingReveal";
 
 /*
   Public landing page ("/"). It explains the product to someone who has never
@@ -12,14 +19,56 @@ import mascot from "@/assets/images/mascot.png";
   short, honest read. Copy leads with meaning, not hype.
 */
 
-const capabilities = [
-  { Icon: ScanLine, name: "Color Scanner", text: "Name any color in plain words." },
-  { Icon: GitCompare, name: "Color Compare", text: "See if two colors really differ." },
-  { Icon: Shirt, name: "Outfit Matching", text: "Check if clothes go together." },
-  { Icon: Apple, name: "Food Ripeness", text: "Tell ripe from unripe produce." },
-  { Icon: Eye, name: "Vision Simulator", text: "Preview how a color looks with CVD." },
-  { Icon: Bookmark, name: "Saved Colors", text: "Remember colors that matter." },
+interface Capability {
+  Icon: ComponentType<{ size?: number; className?: string; "aria-hidden"?: boolean }>;
+  name: string;
+  text: string;
+}
+
+// The six lenses, grouped by what you're trying to do. Each group becomes a tab
+// in the "What you can do" section.
+const capabilityGroups: { id: string; label: string; items: Capability[] }[] = [
+  {
+    id: "identify",
+    label: "Identify",
+    items: [
+      { Icon: ScanLine, name: "Color Scanner", text: "Name any color in plain words." },
+      { Icon: Eye, name: "Vision Simulator", text: "Preview how a color looks with CVD." },
+    ],
+  },
+  {
+    id: "match",
+    label: "Match",
+    items: [
+      { Icon: GitCompare, name: "Color Compare", text: "See if two colors really differ." },
+      { Icon: Shirt, name: "Outfit Matching", text: "Check if clothes go together." },
+    ],
+  },
+  {
+    id: "everyday",
+    label: "Everyday",
+    items: [
+      { Icon: Apple, name: "Food Ripeness", text: "Tell ripe from unripe produce." },
+      { Icon: Bookmark, name: "Saved Colors", text: "Remember colors that matter." },
+    ],
+  },
 ];
+
+function CapabilityList({ items }: { items: Capability[] }) {
+  return (
+    <ul className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+      {items.map(({ Icon, name, text }) => (
+        <li key={name} className="flex items-start gap-3">
+          <Icon size={22} aria-hidden className="mt-0.5 shrink-0 text-accent" />
+          <span>
+            <span className="block font-semibold text-text">{name}</span>
+            <span className="block text-sm text-text-muted">{text}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 const steps = [
   {
@@ -40,61 +89,57 @@ const steps = [
 ];
 
 export function LandingPage() {
+  const scopeRef = useLandingReveal<HTMLDivElement>();
+
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 md:px-6">
-      {/* Hero: a plain promise, the mascot, and one clear action. */}
-      <section className="flex flex-col items-center gap-6 py-12 text-center md:flex-row md:gap-10 md:py-20 md:text-left">
-        <div className="md:flex-1">
-          <p className="text-sm font-semibold uppercase tracking-wide text-accent">
-            Color Assistant
-          </p>
-          <h1 className="mt-2 text-3xl font-bold leading-tight text-text sm:text-4xl md:text-5xl">
-            Understand colors with confidence.
-          </h1>
-          <p className="mt-4 text-lg text-text-muted">
-            all_eyes helps you recognize, compare, and use color in everyday
-            life. It's built for people who can't rely on color alone.
-          </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center md:justify-start">
-            <Link
-              to="/register"
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-primary px-6 text-base font-semibold text-primary-foreground hover:brightness-110"
-            >
-              Get started
-            </Link>
-            <Link
-              to="/login"
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border px-6 text-base font-semibold text-text hover:bg-surface-raised"
-            >
-              I already have an account
-            </Link>
-          </div>
-        </div>
-        <img
-          src={mascot}
-          alt=""
-          width={220}
-          height={220}
-          className="h-40 w-40 shrink-0 sm:h-52 sm:w-52 md:h-56 md:w-56"
-        />
-      </section>
+    <div ref={scopeRef} className="mx-auto w-full max-w-5xl px-4 md:px-6">
+      {/* Decorative wavy backdrop behind the whole landing. */}
+      <WavyBackground />
+
+      {/* Centered hero: mascot front and center with an entrance animation. */}
+      <HeroCentered />
+
+      {/*
+        Showcase: the working demo presented inside a scroll-driven 3D card
+        (ported Container Scroll Animation). It's the product, tilting up to
+        face you as you scroll in, then flattening.
+      */}
+      <ContainerScroll
+        title={
+          <>
+            <p className="text-sm font-semibold uppercase tracking-wide text-accent">
+              See it work
+            </p>
+            <h2 className="mt-2 text-2xl font-bold text-text sm:text-3xl md:text-4xl">
+              Point, and read the color in words
+            </h2>
+          </>
+        }
+      >
+        <LiveColorDemo embedded />
+      </ContainerScroll>
 
       {/* The problem, stated plainly, no fear-mongering. */}
-      <section aria-labelledby="problem-heading" className="border-t border-border py-10 md:py-14">
+      <section
+        data-reveal
+        aria-labelledby="problem-heading"
+        className="border-t border-border py-10 md:py-14"
+      >
         <h2 id="problem-heading" className="text-2xl font-bold text-text">
           Color carries information we can't always see
         </h2>
-        <p className="mt-3 max-w-2xl text-text-muted">
-          Around 1 in 12 men and 1 in 200 women have some color vision
-          deficiency. Everyday choices lean on color: is this fruit ripe, do
-          these clothes match, which wire is which, has this indicator turned
-          red? When color is the only clue, those answers get harder than they
-          should be.
-        </p>
+        {/* lightswind-style word-by-word reveal, ported to GSAP: the sentence
+            develops as you scroll it into view. */}
+        <ScrollReveal
+          as="p"
+          className="mt-3 max-w-2xl text-lg text-text-muted"
+        >
+          {`Around 1 in 12 men and 1 in 200 women have some color vision deficiency. Everyday choices lean on color: is this fruit ripe, do these clothes match, which wire is which, has this indicator turned red? When color is the only clue, those answers get harder than they should be.`}
+        </ScrollReveal>
       </section>
 
       {/* Who it's for. */}
-      <section aria-labelledby="who-heading" className="border-t border-border py-10 md:py-14">
+      <section data-reveal aria-labelledby="who-heading" className="border-t border-border py-10 md:py-14">
         <h2 id="who-heading" className="text-2xl font-bold text-text">
           Who it's for
         </h2>
@@ -115,7 +160,7 @@ export function LandingPage() {
       </section>
 
       {/* How it works: three steps, not decorative cards. */}
-      <section aria-labelledby="how-heading" className="border-t border-border py-10 md:py-14">
+      <section data-reveal aria-labelledby="how-heading" className="border-t border-border py-10 md:py-14">
         <h2 id="how-heading" className="text-2xl font-bold text-text">
           How it works
         </h2>
@@ -135,30 +180,25 @@ export function LandingPage() {
         </ol>
       </section>
 
-      {/* Capabilities. A compact list, icon + name + one line each. */}
-      <section aria-labelledby="caps-heading" className="border-t border-border py-10 md:py-14">
+      {/* Capabilities, grouped into an animated tab switcher: pick what you're
+          trying to do, and the matching tools slide into view. */}
+      <section data-reveal aria-labelledby="caps-heading" className="border-t border-border py-10 md:py-14">
         <h2 id="caps-heading" className="text-2xl font-bold text-text">
           What you can do
         </h2>
-        <ul className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
-          {capabilities.map(({ Icon, name, text }) => (
-            <li key={name} className="flex items-start gap-3">
-              <Icon
-                size={22}
-                aria-hidden
-                className="mt-0.5 shrink-0 text-accent"
-              />
-              <span>
-                <span className="block font-semibold text-text">{name}</span>
-                <span className="block text-sm text-text-muted">{text}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
+        <AnimatedTabs
+          className="mt-6"
+          label="Tool categories"
+          items={capabilityGroups.map((group) => ({
+            id: group.id,
+            label: group.label,
+            content: <CapabilityList items={group.items} />,
+          }))}
+        />
       </section>
 
       {/* Accessibility: the differentiator, told as promises we keep. */}
-      <section aria-labelledby="a11y-heading" className="border-t border-border py-10 md:py-14">
+      <section data-reveal aria-labelledby="a11y-heading" className="border-t border-border py-10 md:py-14">
         <h2 id="a11y-heading" className="text-2xl font-bold text-text">
           Built to be readable, not just usable
         </h2>
@@ -180,7 +220,7 @@ export function LandingPage() {
       </section>
 
       {/* Closing CTA: one action, repeated where a decision is natural. */}
-      <section className="border-t border-border py-12 text-center md:py-16">
+      <section data-reveal className="border-t border-border py-12 text-center md:py-16">
         <h2 className="text-2xl font-bold text-text md:text-3xl">
           Ready to see color with confidence?
         </h2>

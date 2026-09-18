@@ -20,27 +20,33 @@
   --color-text-muted: #a7b2be;
 
   /*
-    Brand palette derived from the mascot: warm amber + blue on a charcoal/white
-    body. Amber and blue differ on the blue-yellow axis (preserved under
-    red-green CVD) AND in luminance, so the pairing survives every deficiency
-    and grayscale. Amber is the primary action; blue is the informational accent.
+    Brand palette taken straight from the HUEFUL logo: deep navy, bright cyan-
+    blue, and a warm orange badge. The cyan-blue reads brightest on the dark UI
+    so it is the primary action; the orange is the warm informational accent.
+    Cyan-blue and orange sit far apart in both hue AND luminance, so the pairing
+    stays distinguishable under every color vision deficiency and in grayscale.
+    Navy is a supporting brand tone for deep fills and badges.
   */
-  --color-primary: #f5a623;
-  --color-primary-foreground: #1a1205;
+  --color-primary: #0aa2e6; /* logo cyan-blue */
+  --color-primary-foreground: #04121c;
 
-  /* secondary / informational accent: the mascot's blue */
-  --color-accent: #3b82f6;
-  --color-accent-foreground: #04101f;
+  /* informational / warm accent: the logo's orange badge */
+  --color-accent: #ff7a2f;
+  --color-accent-foreground: #1a0c02;
 
-  /* focus ring: high contrast blue, distinct from the amber primary, never removed */
-  --color-focus: #7dd3fc;
+  /* deep brand navy from the logo's dark H, for badges and deep fills */
+  --color-brand-navy: #0a3a78;
+  --color-brand-navy-foreground: #eaf3ff;
+
+  /* focus ring: bright cyan from the logo, distinct from the orange accent, never removed */
+  --color-focus: #38bdf8;
 
   /*
     Status scale: a bright -> dark LUMINANCE spread so the steps are separable
     without relying on hue (holds under any CVD and in grayscale). Each status
     is always paired with an icon + text label in components, never used alone.
-    Note these are semantic status colors, intentionally kept off the amber
-    brand hue so "ripe" never reads as a primary button.
+    These stay off the brand hues (cyan / orange) so a status never reads as a
+    primary or accent action.
       ripe     = bright yellow-green   (highest luminance)
       unripe   = mid teal-green
       overripe = dark brown            (lowest luminance)
@@ -48,7 +54,7 @@
   --color-status-ripe: #d9e021;
   --color-status-unripe: #2dd4bf;
   --color-status-overripe: #78350f;
-  --color-status-warning: #f5a623;
+  --color-status-warning: #eab308; /* amber-yellow, kept distinct from the orange accent */
   --color-status-danger: #f43f5e;
   --color-status-uncertain: #94a3b8;
 
@@ -65,6 +71,16 @@ html,
 body,
 #root {
   height: 100%;
+}
+
+/*
+  In-page anchor jumps (the floating nav's links) should land below the fixed
+  nav, not tucked under it. scroll-padding-top reserves that space; smooth
+  scroll is a nicety the reduced-motion block below overrides to auto.
+*/
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 body {
@@ -108,6 +124,52 @@ body {
   animation: page-in 0.18s ease-out both;
 }
 
+/*
+  Slow horizontal drift for the decorative wavy background. The waves are twice
+  the viewport wide and slide by half their width on a loop, so the motion reads
+  as a seamless gentle sway. Disabled by the reduced-motion block below.
+*/
+@keyframes wave-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-wave-slow {
+  animation: wave-drift 22s linear infinite;
+}
+
+.animate-wave-fast {
+  animation: wave-drift 14s linear infinite;
+}
+
+/*
+  Scanner line sweep for the camera capture surface. Travels top to bottom and
+  back within the (overflow-clipped) focus frame. Disabled by the reduced-motion
+  block below; the scanning line is decorative.
+*/
+@keyframes scan-line {
+  0% {
+    top: 0%;
+    opacity: 0.25;
+  }
+  50% {
+    top: 100%;
+    opacity: 1;
+  }
+  100% {
+    top: 0%;
+    opacity: 0.25;
+  }
+}
+
+.animate-scan-line {
+  animation: scan-line 2.6s ease-in-out infinite;
+}
+
 /* Honor reduced-motion: drop non-essential animation. */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -118,4 +180,30 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/*
+  User accessibility preferences from Settings, applied as classes on <html>.
+  These layer on top of the OS-level media queries above.
+*/
+
+/* In-app reduced-motion override: same effect as the OS media query. */
+.pref-reduced-motion *,
+.pref-reduced-motion *::before,
+.pref-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Larger text: bump the root size so rem-based type scales up everywhere. */
+.pref-larger-text {
+  font-size: 18px;
+}
+
+/* Higher contrast: stronger borders and brighter muted text on the dark UI. */
+.pref-high-contrast {
+  --color-border: #4a5764;
+  --color-text-muted: #cbd3db;
 }

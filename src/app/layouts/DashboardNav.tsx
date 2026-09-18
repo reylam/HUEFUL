@@ -11,6 +11,7 @@ import {
   Settings,
 } from "lucide-react";
 import { lenses } from "@/app/lenses";
+import logoText from "@/assets/images/logo_text.png";
 
 /*
   One nav, two shapes, mobile-first, then use the extra room:
@@ -24,7 +25,12 @@ import { lenses } from "@/app/lenses";
   weight, never color alone. Icons come from lucide so the set stays consistent.
 */
 
-type IconType = ComponentType<{ size?: number; strokeWidth?: number; "aria-hidden"?: boolean }>;
+type IconType = ComponentType<{
+  size?: number;
+  strokeWidth?: number;
+  "aria-hidden"?: boolean;
+  className?: string;
+}>;
 
 interface NavItem {
   to: string;
@@ -64,12 +70,19 @@ const items: NavItem[] = [
   },
 ];
 
+/*
+  Mobile bottom nav: a plain bar docked to the bottom edge, full width, squared
+  except for gently rounded top-left and top-right corners so it reads as a
+  panel rising from the bottom. Each item is an icon + label; the active one is
+  marked with a top bar + weight (never color alone). It respects the phone's
+  home-indicator safe area.
+*/
 export function DashboardBottomNav() {
   const barItems = items.filter((i) => i.primary);
   return (
     <nav
       aria-label="Primary"
-      className="sticky bottom-0 z-10 border-t border-border bg-surface-raised md:hidden"
+      className="sticky bottom-0 z-20 rounded-t-2xl border-t border-border bg-surface-raised pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <ul className="mx-auto flex max-w-md items-stretch justify-around">
         {barItems.map((item) => (
@@ -79,16 +92,27 @@ export function DashboardBottomNav() {
               end={item.to === "/dashboard"}
               className={({ isActive }) =>
                 [
-                  "flex min-h-14 flex-col items-center justify-center gap-1 py-2 text-xs font-medium",
-                  "border-t-2 transition-colors",
+                  "group flex min-h-14 flex-col items-center justify-center gap-1 py-2 text-xs font-medium",
+                  "border-t-2 transition-colors active:scale-95 motion-reduce:active:scale-100",
                   isActive
                     ? "border-primary text-text"
                     : "border-transparent text-text-muted",
                 ].join(" ")
               }
             >
-              <item.Icon size={22} aria-hidden />
-              <span>{item.navLabel}</span>
+              {({ isActive }) => (
+                <>
+                  <item.Icon
+                    size={22}
+                    aria-hidden
+                    className={[
+                      "transition-transform duration-200 motion-reduce:transition-none",
+                      isActive ? "-translate-y-0.5 scale-110" : "",
+                    ].join(" ")}
+                  />
+                  <span>{item.navLabel}</span>
+                </>
+              )}
             </NavLink>
           </li>
         ))}
@@ -105,9 +129,16 @@ export function DashboardSideNav() {
     >
       <NavLink
         to="/"
-        className="flex items-center gap-2 px-3 pb-6 text-sm font-semibold tracking-wide text-text"
+        className="flex items-center px-3 pb-6"
+        aria-label="HUEFUL home"
       >
-        all_eyes
+        <img
+          src={logoText}
+          alt="HUEFUL"
+          width={360}
+          height={120}
+          className="h-8 w-auto"
+        />
       </NavLink>
       <ul className="flex flex-col gap-1">
         {items.map((item) => (

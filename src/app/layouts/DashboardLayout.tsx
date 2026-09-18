@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { lenses } from "@/app/lenses";
-import { useAuth } from "@/stores/auth";
 import { PageTransition } from "@/shared/ui/PageTransition";
 import { DashboardBottomNav, DashboardSideNav } from "./DashboardNav";
+import logoIcon from "@/assets/images/logo.png";
 
 function RouteFallback() {
   return (
@@ -24,20 +24,16 @@ function titleFor(pathname: string): string {
 }
 
 /*
-  The authenticated app shell. Mobile-first: single column with a bottom tab bar
-  in the thumb zone; from md up, a side rail plus content capped at a readable
-  measure (not locked to phone width, not stretched edge to edge).
+  The app shell. Mobile-first: single column with a bottom tab bar in the thumb
+  zone; from md up, a side rail plus content capped at a readable measure (not
+  locked to phone width, not stretched edge to edge).
 
-  It also guards the zone: with no session we send the user to /login and
-  remember where they were headed so login can return them.
+  The zone is open: the dashboard and every lens are browsable without a
+  session, so anyone can explore the tools. Sign-in only personalizes things
+  (name, saved data); it is not a gate.
 */
 export function DashboardLayout() {
   const location = useLocation();
-  const user = useAuth((s) => s.user);
-
-  if (!user) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
-  }
 
   return (
     <div className="flex min-h-full flex-col bg-surface md:flex-row">
@@ -52,9 +48,13 @@ export function DashboardLayout() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-baseline justify-between px-4 pb-2 pt-4 md:px-8 md:pt-6">
-          <span className="text-sm font-semibold tracking-wide text-text-muted md:hidden">
-            all_eyes
-          </span>
+          <img
+            src={logoIcon}
+            alt="HUEFUL"
+            width={135}
+            height={128}
+            className="h-6 w-auto md:hidden"
+          />
           <h1 className="text-xl font-bold text-text md:text-2xl">
             {titleFor(location.pathname)}
           </h1>

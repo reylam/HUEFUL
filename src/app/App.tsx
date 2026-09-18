@@ -1,6 +1,7 @@
-import { lazy } from "react";
+import { lazy, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
+import { useApplyPreferences } from "@/stores/preferences";
 import { PublicLayout } from "./layouts/PublicLayout";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { lenses } from "./lenses";
@@ -25,6 +26,18 @@ const LoginPage = lazy(() =>
 const RegisterPage = lazy(() =>
   import("@/features/auth").then((m) => ({ default: m.RegisterPage })),
 );
+const AboutPage = lazy(() =>
+  import("@/features/about").then((m) => ({ default: m.AboutPage })),
+);
+const FeaturesPage = lazy(() =>
+  import("@/features/features-page").then((m) => ({ default: m.FeaturesPage })),
+);
+const FaqPage = lazy(() =>
+  import("@/features/faq").then((m) => ({ default: m.FaqPage })),
+);
+const ContactPage = lazy(() =>
+  import("@/features/contact").then((m) => ({ default: m.ContactPage })),
+);
 const DashboardHome = lazy(() =>
   import("@/features/dashboard-home").then((m) => ({
     default: m.DashboardHome,
@@ -38,11 +51,35 @@ const NotFoundPage = lazy(() =>
 );
 
 export function App() {
+  // Apply saved accessibility preferences (reduced motion, larger text, higher
+  // contrast) to the document root, app-wide.
+  useApplyPreferences();
+
+  // On phones the bottom is occupied by the dashboard nav, so toasts sit at the
+  // top where they cover nothing important and nothing covers them. On wider
+  // screens the bottom is clear (side rail nav), so keep them bottom-center.
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined"
+      ? window.matchMedia("(max-width: 767px)").matches
+      : false,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const onChange = () => setIsMobile(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   return (
     <>
       <Routes>
         <Route element={<PublicLayout />}>
           <Route index element={<LandingPage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="features" element={<FeaturesPage />} />
+          <Route path="faq" element={<FaqPage />} />
+          <Route path="contact" element={<ContactPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
         </Route>
@@ -59,7 +96,7 @@ export function App() {
       </Routes>
 
       <Toaster
-        position="bottom-center"
+        position={isMobile ? "top-center" : "bottom-center"}
         toastOptions={{
           className:
             "rounded-xl border border-border bg-surface-raised text-text",

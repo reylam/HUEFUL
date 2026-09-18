@@ -102,7 +102,7 @@ export const lenses: Lens[] = [
     label: "Saved Colors",
     navLabel: "Saved",
     summary: "Keep colors you named so you can recognize them again later.",
-    state: "planned",
+    state: "ready",
     Component: lazy(() =>
       import("@/features/saved-colors").then((m) => ({
         default: m.SavedColorsPage,

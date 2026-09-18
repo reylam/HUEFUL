@@ -36,6 +36,6 @@ export const useAuth = create<AuthState>()(
       signUp: (name, email) => set({ user: { name, email } }),
       signOut: () => set({ user: null }),
     }),
-    { name: "all_eyes.session" },
+    { name: "hueful.session" },
   ),
 );

@@ -52,6 +52,6 @@ export const useVisionProfile = create<VisionProfileState>()(
       profile: "unknown",
       setProfile: (profile) => set({ profile }),
     }),
-    { name: "all_eyes.vision-profile" },
+    { name: "hueful.vision-profile" },
   ),
 );
