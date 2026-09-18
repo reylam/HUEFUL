@@ -1,4 +1,4 @@
-# all_eyes — frontend
+# HUEFUL — frontend
 
 A mobile-first color assistant for people with color vision deficiency (CVD).
 React + TypeScript + Vite + Tailwind v4.
