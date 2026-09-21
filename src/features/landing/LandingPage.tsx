@@ -1,9 +1,7 @@
 import type { ComponentType } from "react";
 import { Link } from "react-router-dom";
 import { ScanLine, GitCompare, Shirt, Apple, Eye, Bookmark } from "lucide-react";
-import { ContainerScroll } from "@/shared/ui/ContainerScroll";
 import { AnimatedTabs } from "@/shared/ui/AnimatedTabs";
-import { ScrollReveal } from "@/shared/ui/ScrollReveal";
 import { WavyBackground } from "@/shared/ui/WavyBackground";
 import { HeroCentered } from "./components/HeroCentered";
 import { LiveColorDemo } from "./components/LiveColorDemo";
@@ -99,25 +97,26 @@ export function LandingPage() {
       {/* Centered hero: mascot front and center with an entrance animation. */}
       <HeroCentered />
 
-      {/*
-        Showcase: the working demo presented inside a scroll-driven 3D card
-        (ported Container Scroll Animation). It's the product, tilting up to
-        face you as you scroll in, then flattening.
-      */}
-      <ContainerScroll
-        title={
-          <>
-            <p className="text-sm font-semibold uppercase tracking-wide text-accent">
-              See it work
-            </p>
-            <h2 className="mt-2 text-2xl font-bold text-text sm:text-3xl md:text-4xl">
-              Point, and read the color in words
-            </h2>
-          </>
-        }
+      {/* Showcase: the working demo, in the same flat card language as the
+          rest of the page. */}
+      <section
+        data-reveal
+        aria-labelledby="showcase-heading"
+        className="border-t border-border py-10 md:py-14"
       >
-        <LiveColorDemo embedded />
-      </ContainerScroll>
+        <p className="text-sm font-semibold uppercase tracking-wide text-accent">
+          See it work
+        </p>
+        <h2
+          id="showcase-heading"
+          className="mt-2 text-2xl font-bold text-text sm:text-3xl md:text-4xl"
+        >
+          Point, and read the color in words
+        </h2>
+        <div className="mt-6 overflow-hidden rounded-card border border-border bg-surface-raised">
+          <LiveColorDemo embedded />
+        </div>
+      </section>
 
       {/* The problem, stated plainly, no fear-mongering. */}
       <section
@@ -128,14 +127,9 @@ export function LandingPage() {
         <h2 id="problem-heading" className="text-2xl font-bold text-text">
           Color carries information we can't always see
         </h2>
-        {/* lightswind-style word-by-word reveal, ported to GSAP: the sentence
-            develops as you scroll it into view. */}
-        <ScrollReveal
-          as="p"
-          className="mt-3 max-w-2xl text-lg text-text-muted"
-        >
+        <p className="mt-3 max-w-2xl text-lg text-text-muted">
           {`Around 1 in 12 men and 1 in 200 women have some color vision deficiency. Everyday choices lean on color: is this fruit ripe, do these clothes match, which wire is which, has this indicator turned red? When color is the only clue, those answers get harder than they should be.`}
-        </ScrollReveal>
+        </p>
       </section>
 
       {/* Who it's for. */}

@@ -39,5 +39,3 @@ src/
 - **Performance** — each lens is a lazy-loaded route.
 - **Prototype vs production** — placeholders and mocks are labelled; see the
   `ComingSoon` note on scaffolded lenses.
-
-Design and architecture rules live in `.kiro/skills/frontend-craft/`.

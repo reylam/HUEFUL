@@ -14,6 +14,7 @@ import { useVisionProfile, CVD_PROFILES } from "@/stores/vision-profile";
 import type { VisionProfileId } from "@/stores/vision-profile";
 import { usePreferences } from "@/stores/preferences";
 import { Button } from "@/shared/ui/Button";
+import { BrandMark } from "@/shared/ui/BrandMark";
 
 /*
   Settings, kept simple and honest. Appearance shows the theme options but is
@@ -60,6 +61,7 @@ export function SettingsPage() {
         <div className="flex flex-col gap-2">
           <ToggleRow
             Icon={Zap}
+            tone="primary"
             label="Reduced motion"
             hint="Turn off animation and transitions."
             checked={prefs.reducedMotion}
@@ -67,6 +69,7 @@ export function SettingsPage() {
           />
           <ToggleRow
             Icon={Type}
+            tone="accent"
             label="Larger text"
             hint="Increase the base text size across the app."
             checked={prefs.largerText}
@@ -74,6 +77,7 @@ export function SettingsPage() {
           />
           <ToggleRow
             Icon={Contrast}
+            tone="navy"
             label="Higher contrast"
             hint="Strengthen borders and muted text."
             checked={prefs.higherContrast}
@@ -200,12 +204,14 @@ function ThemeChip({
 
 function ToggleRow({
   Icon,
+  tone,
   label,
   hint,
   checked,
   onChange,
 }: {
   Icon: typeof Zap;
+  tone: "primary" | "accent" | "navy";
   label: string;
   hint: string;
   checked: boolean;
@@ -219,9 +225,7 @@ function ToggleRow({
       onClick={onChange}
       className="flex items-center gap-3 rounded-2xl border border-border bg-surface-raised p-4 text-left transition-colors hover:bg-surface"
     >
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface text-accent">
-        <Icon size={18} aria-hidden />
-      </span>
+      <BrandMark tone={tone} icon={<Icon size={18} aria-hidden />} />
       <span className="min-w-0 flex-1">
         <span className="block font-medium text-text">{label}</span>
         <span className="block text-sm text-text-muted">{hint}</span>

@@ -46,7 +46,7 @@ function sampleCenterHex(
 
 interface LiveColorDemoProps {
   /**
-    When embedded (e.g. inside the ContainerScroll showcase), drop the outer
+    When embedded (e.g. inside the landing's showcase section), drop the outer
     section border and the visible heading, since the wrapper supplies the
     framing and title. The heading stays in the DOM as a screen-reader label.
   */

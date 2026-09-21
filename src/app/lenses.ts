@@ -38,7 +38,7 @@ export const lenses: Lens[] = [
     navLabel: "Scan",
     summary:
       "Sample a color and get its plain-language name with a CVD-safe breakdown.",
-    state: "prototype",
+    state: "ready",
     Component: lazy(() =>
       import("@/features/color-scanner").then((m) => ({
         default: m.ColorScannerPage,
@@ -51,7 +51,7 @@ export const lenses: Lens[] = [
     navLabel: "Compare",
     summary:
       "Check whether two colors are actually distinguishable, for you and across CVD types.",
-    state: "planned",
+    state: "ready",
     Component: lazy(() =>
       import("@/features/compare-colors").then((m) => ({
         default: m.CompareColorsPage,
@@ -64,7 +64,7 @@ export const lenses: Lens[] = [
     navLabel: "Outfit",
     summary:
       "See whether two garments clash or go together, described in words, not just swatches.",
-    state: "planned",
+    state: "ready",
     Component: lazy(() =>
       import("@/features/outfit-matching").then((m) => ({
         default: m.OutfitMatchingPage,
@@ -77,7 +77,7 @@ export const lenses: Lens[] = [
     navLabel: "Ripeness",
     summary:
       "Judge how ripe produce is from its color, with labels and icons, never color alone.",
-    state: "planned",
+    state: "ready",
     Component: lazy(() =>
       import("@/features/food-ripeness").then((m) => ({
         default: m.FoodRipenessPage,
@@ -90,7 +90,7 @@ export const lenses: Lens[] = [
     navLabel: "Simulate",
     summary:
       "See how a color shifts under protanopia, deuteranopia, and tritanopia.",
-    state: "prototype",
+    state: "ready",
     Component: lazy(() =>
       import("@/features/cvd-simulator").then((m) => ({
         default: m.CvdSimulatorPage,

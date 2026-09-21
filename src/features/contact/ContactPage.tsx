@@ -4,7 +4,7 @@ import { Mail, MessageSquare, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/shared/ui/Button";
 import { Reveal } from "@/shared/ui/Reveal";
-import { TiltCard } from "@/shared/ui/TiltCard";
+import { BrandMark } from "@/shared/ui/BrandMark";
 import { WavyBackground } from "@/shared/ui/WavyBackground";
 
 /*
@@ -26,7 +26,7 @@ const channels = [
     Icon: ExternalLink,
     label: "Project",
     value: "Report an issue",
-    href: "https://github.com",
+    href: "https://github.com/reylam/HUEFUL/issues/new",
   },
 ];
 
@@ -98,25 +98,27 @@ export function ContactPage() {
       <section className="grid gap-6 border-t border-border py-10 md:grid-cols-5 md:py-14">
         {/* Direct channels. */}
         <div className="flex flex-col gap-4 md:col-span-2">
-          {channels.map(({ Icon, label, value, href }) => (
-            <Reveal key={label}>
-              <TiltCard className="rounded-card border border-border bg-surface-raised p-4">
-                <a
-                  href={href}
-                  className="flex items-center gap-3 text-text"
-                  {...(href.startsWith("http")
-                    ? { target: "_blank", rel: "noreferrer" }
-                    : {})}
-                >
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/15 text-primary">
-                    <Icon size={18} aria-hidden />
-                  </span>
-                  <span>
-                    <span className="block text-sm text-text-muted">{label}</span>
-                    <span className="block font-semibold">{value}</span>
-                  </span>
-                </a>
-              </TiltCard>
+          {channels.map(({ Icon, label, value, href }, i) => (
+            <Reveal
+              key={label}
+              className="rounded-card border border-border bg-surface-raised p-4"
+            >
+              <a
+                href={href}
+                className="flex items-center gap-3 text-text"
+                {...(href.startsWith("http")
+                  ? { target: "_blank", rel: "noreferrer" }
+                  : {})}
+              >
+                <BrandMark
+                  tone={i === 0 ? "primary" : "navy"}
+                  icon={<Icon size={18} aria-hidden />}
+                />
+                <span>
+                  <span className="block text-sm text-text-muted">{label}</span>
+                  <span className="block font-semibold">{value}</span>
+                </span>
+              </a>
             </Reveal>
           ))}
         </div>
@@ -129,9 +131,7 @@ export function ContactPage() {
                 role="status"
                 className="flex flex-col items-start gap-3 rounded-card border border-status-unripe bg-surface-raised p-6"
               >
-                <span className="grid h-11 w-11 place-items-center rounded-full bg-primary/15 text-primary">
-                  <MessageSquare size={20} aria-hidden />
-                </span>
+                <BrandMark tone="primary" icon={<MessageSquare size={20} aria-hidden />} />
                 <h2 className="text-lg font-semibold text-text">
                   Message noted
                 </h2>
