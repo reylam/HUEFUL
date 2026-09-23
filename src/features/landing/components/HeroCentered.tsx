@@ -76,7 +76,7 @@ export function HeroCentered() {
           height={288}
           className="h-32 w-32 sm:h-40 sm:w-40"
         />
-        <p className="max-w-[14rem] text-sm font-medium text-text-muted">
+        <p className="max-w-14rem text-sm font-medium text-text-muted">
           "I can name any color you point me at."
         </p>
       </div>
