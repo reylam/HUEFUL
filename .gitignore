@@ -27,3 +27,10 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Claude
+CLAUDE.md
+DESIGN.md
+PRODUCT.md
+
+.impeccable

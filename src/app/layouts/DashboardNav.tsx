@@ -19,7 +19,12 @@ import logoText from "@/assets/images/logo_text.png";
     it thumb-friendly we surface the primary destinations only; the rest live on
     the dashboard home and in the desktop rail.
   - md and up: a vertical side rail (<DashboardSideNav/>), because a bottom bar
-    is a phone pattern and forcing it onto a wide screen is an anti-pattern.
+    is a phone pattern and forcing it onto a wide screen is an anti-pattern. The
+    rail sticks to the top of the viewport so every tool stays one click away on
+    long pages. It needs self-start and an explicit height as well as sticky: a
+    stretched flex item is already as tall as its container, so it has nothing
+    to stick within. It scrolls internally if its own items outgrow the screen
+    (the larger-text preference can cause that).
 
   Every item carries an icon AND a text label, and the active state uses a bar +
   weight, never color alone. Icons come from lucide so the set stays consistent.
@@ -125,7 +130,7 @@ export function DashboardSideNav() {
   return (
     <nav
       aria-label="Sections"
-      className="hidden w-60 shrink-0 border-r border-border bg-surface-raised px-3 py-6 md:block"
+      className="hidden w-60 shrink-0 border-r border-border bg-surface-raised px-3 py-6 md:sticky md:top-0 md:block md:h-dvh md:self-start md:overflow-y-auto"
     >
       <NavLink
         to="/"
