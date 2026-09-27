@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import { WELCOME_TOUR, useOnboarding } from "@/stores/onboarding";
 import { useApplyPreferences } from "@/stores/preferences";
+import { Preloader } from "@/shared/ui/Preloader";
 import { PublicLayout } from "./layouts/PublicLayout";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { lenses } from "./lenses";
@@ -97,6 +98,8 @@ export function App() {
 
   return (
     <>
+      <Preloader />
+
       <Routes>
         <Route element={<PublicLayout />}>
           <Route index element={<LandingPage />} />
