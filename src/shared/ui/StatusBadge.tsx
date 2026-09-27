@@ -32,13 +32,13 @@ const toneColor: Record<StatusTone, string> = {
 
 export function StatusBadge({ tone, label, icon }: StatusBadgeProps) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full bg-surface-raised px-3 py-1.5 text-sm font-medium text-text">
+    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-sm font-medium text-text">
       <span aria-hidden className="text-text">
         {icon}
       </span>
       <span
         aria-hidden
-        className={`h-2.5 w-2.5 rounded-full ${toneColor[tone]}`}
+        className={`h-2.5 w-2.5 rounded-full ring-1 ring-inset ring-black/15 ${toneColor[tone]}`}
       />
       <span>{label}</span>
     </span>

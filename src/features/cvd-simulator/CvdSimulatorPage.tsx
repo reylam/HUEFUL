@@ -111,7 +111,7 @@ export function CvdSimulatorPage() {
       <div
         role="group"
         aria-label="Vision type"
-        className="flex flex-wrap gap-2"
+        className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap"
       >
         {MODES.map((m) => {
           const selected = mode === m.id;
@@ -122,10 +122,10 @@ export function CvdSimulatorPage() {
               aria-pressed={selected}
               onClick={() => setMode(m.id)}
               className={[
-                "min-h-10 rounded-full border px-4 text-sm font-medium transition-colors",
+                "min-h-11 rounded-full border px-4 text-sm font-medium transition-colors",
                 selected
                   ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border text-text-muted hover:text-text",
+                  : "border-border bg-surface-raised text-text-muted hover:text-text",
               ].join(" ")}
             >
               {m.label}
@@ -158,7 +158,7 @@ export function CvdSimulatorPage() {
         />
       ) : (
         /* Sample scene before any image is provided. */
-        <div className="rounded-card border border-border bg-surface-raised p-5">
+        <div className="rounded-card border border-border bg-surface-raised shadow-card p-5">
           <p className="mb-3 text-sm text-text-muted">
             No image yet. Here's how a set of common colors looks under{" "}
             <span className="font-semibold text-text">{modeLabel}</span>. Each

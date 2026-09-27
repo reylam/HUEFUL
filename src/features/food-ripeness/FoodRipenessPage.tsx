@@ -30,19 +30,19 @@ const STAGE_UI: Record<
     label: "Looks ready",
     hint: "The color reads as ripe. Give it a gentle squeeze to confirm.",
     Icon: Check,
-    tone: "bg-status-ripe/20 text-status-ripe",
+    tone: "bg-status-ripe/20 text-status-ripe-ink",
   },
   almost: {
     label: "Almost ready",
     hint: "Getting there. A day or two more will likely do it.",
     Icon: Clock,
-    tone: "bg-status-warning/20 text-status-warning",
+    tone: "bg-status-warning/20 text-status-warning-ink",
   },
   early: {
     label: "Needs more time",
     hint: "Reads underripe. Leave it out a few more days.",
     Icon: Hourglass,
-    tone: "bg-status-unripe/20 text-status-unripe",
+    tone: "bg-status-unripe/20 text-status-unripe-ink",
   },
 };
 
@@ -146,7 +146,7 @@ function RipenessResult({ reading }: { reading: Reading }) {
   return (
     <div
       aria-live="polite"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface-raised p-5"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface-raised shadow-card p-5"
     >
       <div className="flex items-center gap-3">
         <span className={`grid h-11 w-11 place-items-center rounded-full ${ui.tone}`}>

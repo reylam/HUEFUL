@@ -101,7 +101,7 @@ export function ContactPage() {
           {channels.map(({ Icon, label, value, href }, i) => (
             <Reveal
               key={label}
-              className="rounded-card border border-border bg-surface-raised p-4"
+              className="rounded-card border border-border bg-surface-raised shadow-card p-4"
             >
               <a
                 href={href}
@@ -147,7 +147,7 @@ export function ContactPage() {
               <form
                 onSubmit={handleSubmit}
                 noValidate
-                className="flex flex-col gap-4 rounded-card border border-border bg-surface-raised p-6"
+                className="flex flex-col gap-4 rounded-card border border-border bg-surface-raised shadow-card p-6"
               >
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor={nameId} className="text-sm font-medium text-text">

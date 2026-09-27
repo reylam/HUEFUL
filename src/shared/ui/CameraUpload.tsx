@@ -116,7 +116,7 @@ export function CameraUpload({
     <div className={className}>
       <div
         aria-labelledby={regionId}
-        className="relative aspect-square w-full overflow-hidden rounded-card border border-border bg-surface-sunken"
+        className="relative aspect-square w-full overflow-hidden rounded-card border border-border bg-surface-sunken sm:aspect-[4/3]"
       >
         <span id={regionId} className="sr-only">
           Camera preview
@@ -171,7 +171,7 @@ export function CameraUpload({
         )}
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="fill-last-odd mt-3 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
         {mode === "camera" ? (
           <>
             <Button onClick={capture}>

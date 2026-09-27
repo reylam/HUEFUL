@@ -8,14 +8,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const base =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl px-5 " +
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl px-4 " +
   "text-base font-semibold transition-colors disabled:opacity-50 " +
   "disabled:pointer-events-none";
 
 const variants: Record<Variant, string> = {
   primary: "bg-primary text-primary-foreground hover:brightness-110",
   accent: "bg-accent text-accent-foreground hover:brightness-110",
-  ghost: "bg-surface-raised text-text hover:bg-border",
+  ghost: "border border-border bg-surface-raised text-text hover:bg-surface-sunken",
 };
 
 export function Button({

@@ -95,7 +95,7 @@ function FeatureGrid({ items }: { items: Feature[] }) {
           <Reveal
             key={name}
             delay={i * 0.06}
-            className="flex h-full flex-col gap-2 rounded-card border border-border bg-surface-raised p-5"
+            className="flex h-full flex-col gap-2 rounded-card border border-border bg-surface-raised shadow-card p-5"
           >
             <span className="flex items-center justify-between gap-2">
               <Icon size={24} aria-hidden className="text-accent" />

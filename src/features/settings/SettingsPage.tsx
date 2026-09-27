@@ -13,12 +13,13 @@ import { useAuth } from "@/stores/auth";
 import { useVisionProfile, CVD_PROFILES } from "@/stores/vision-profile";
 import type { VisionProfileId } from "@/stores/vision-profile";
 import { usePreferences } from "@/stores/preferences";
+import type { ThemePreference } from "@/stores/preferences";
 import { Button } from "@/shared/ui/Button";
 import { BrandMark } from "@/shared/ui/BrandMark";
 
 /*
-  Settings, kept simple and honest. Appearance shows the theme options but is
-  clear that only Dark ships today (no fake light mode). Accessibility toggles
+  Settings, kept simple and honest. Appearance picks the theme: Light is the
+  default, Dark is the low-glare option, System follows the OS. Accessibility toggles
   are real: they persist and apply app-wide via the preferences store. Vision
   profile changes how tools phrase explanations. Account shows the local stub
   session.
@@ -42,14 +43,20 @@ export function SettingsPage() {
     <div className="flex flex-col gap-10">
       {/* Appearance. */}
       <Section title="Appearance" description="How HUEFUL looks.">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Theme">
-          <ThemeChip Icon={Moon} label="Dark" active />
-          <ThemeChip Icon={Sun} label="Light" disabled />
-          <ThemeChip Icon={Monitor} label="System" disabled />
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Theme">
+          {THEMES.map(({ value, label, Icon }) => (
+            <ThemeChip
+              key={value}
+              Icon={Icon}
+              label={label}
+              active={prefs.theme === value}
+              onSelect={() => prefs.setTheme(value)}
+            />
+          ))}
         </div>
-        <p className="mt-2 text-sm text-text-muted">
-          HUEFUL is tuned for a dark interface today. Light and system themes are
-          on the way.
+        <p className="text-sm text-text-muted">
+          Dark can be easier on the eyes outdoors or at night. System follows your
+          device.
         </p>
       </Section>
 
@@ -172,33 +179,40 @@ function Section({
   );
 }
 
+const THEMES: { value: ThemePreference; label: string; Icon: typeof Moon }[] = [
+  { value: "light", label: "Light", Icon: Sun },
+  { value: "dark", label: "Dark", Icon: Moon },
+  { value: "system", label: "System", Icon: Monitor },
+];
+
 function ThemeChip({
   Icon,
   label,
-  active = false,
-  disabled = false,
+  active,
+  onSelect,
 }: {
   Icon: typeof Moon;
   label: string;
-  active?: boolean;
-  disabled?: boolean;
+  active: boolean;
+  onSelect: () => void;
 }) {
   return (
-    <span
+    <button
+      type="button"
+      role="radio"
+      aria-checked={active}
+      onClick={onSelect}
       className={[
-        "inline-flex min-h-11 items-center gap-2 rounded-2xl border px-4 text-sm font-medium",
+        "inline-flex min-h-11 items-center gap-2 rounded-2xl border px-4 text-sm font-medium transition-colors",
         active
           ? "border-primary bg-primary text-primary-foreground"
-          : "border-border text-text-muted",
-        disabled ? "opacity-50" : "",
+          : "border-border bg-surface-raised text-text-muted hover:bg-surface-sunken hover:text-text",
       ].join(" ")}
-      aria-current={active ? "true" : undefined}
     >
       <Icon size={16} aria-hidden />
       {label}
       {active && <Check size={15} aria-hidden />}
-      {disabled && <span className="text-xs">(soon)</span>}
-    </span>
+    </button>
   );
 }
 
@@ -236,7 +250,7 @@ function ToggleRow({
         aria-hidden
         className={[
           "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors motion-reduce:transition-none",
-          checked ? "bg-primary" : "bg-border",
+          checked ? "bg-primary" : "bg-border-strong",
         ].join(" ")}
       >
         <span

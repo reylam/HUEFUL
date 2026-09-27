@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 import gsap from "gsap";
 
 export interface FloatingNavLink {
@@ -25,7 +26,15 @@ interface FloatingNavProps {
   actions: ReactNode;
   /** Optional inline links shown in the center on wider screens. */
   links?: FloatingNavLink[];
+  /**
+    Extra entries for the bottom of the phone menu, e.g. account actions that
+    are hidden from the bar itself to keep it uncrowded at 360px.
+  */
+  menuFooter?: ReactNode;
 }
+
+const menuLinkClass =
+  "flex min-h-12 items-center rounded-2xl px-4 text-base font-medium text-text transition-colors hover:bg-surface active:bg-surface-sunken";
 
 /*
   A nav with two synced states that morph into each other on scroll:
@@ -45,9 +54,29 @@ interface FloatingNavProps {
   transitions) and fails safe (on a GSAP error we clear inline styles so the nav
   is always visible and usable).
 */
-export function FloatingNav({ brand, actions, links }: FloatingNavProps) {
+export function FloatingNav({ brand, actions, links, menuFooter }: FloatingNavProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLElement>(null);
+  const menuId = useId();
+  const { pathname } = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const hasMenu = !!links?.length;
+
+  // Phone menu: close on navigation, on Esc, and on a tap outside the nav.
+  useEffect(() => setMenuOpen(false), [pathname]);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    const onPointer = (e: PointerEvent) => {
+      if (!navRef.current?.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -115,6 +144,8 @@ export function FloatingNav({ brand, actions, links }: FloatingNavProps) {
       <nav
         ref={navRef}
         aria-label="Primary"
+        // A full pill can't hold a dropdown panel; soften it while open.
+        style={menuOpen ? { borderRadius: "1.5rem" } : undefined}
         className={[
           "pointer-events-auto w-full border border-border backdrop-blur-md",
           // Only transition interpolatable properties: both max-width values are
@@ -126,7 +157,7 @@ export function FloatingNav({ brand, actions, links }: FloatingNavProps) {
           // Driven by the wrapper's data-floating flag via the group.
           "group-data-[floating=true]:max-w-3xl group-data-[floating=true]:rounded-full",
           "group-data-[floating=true]:bg-surface-raised/80",
-          "group-data-[floating=true]:shadow-[0_12px_40px_-10px_rgba(0,0,0,0.6)]",
+          "group-data-[floating=true]:shadow-float",
           "supports-[backdrop-filter]:group-data-[floating=true]:bg-surface-raised/70",
         ].join(" ")}
       >
@@ -165,8 +196,50 @@ export function FloatingNav({ brand, actions, links }: FloatingNavProps) {
 
           <div className="flex shrink-0 items-center gap-1 pr-0.5 text-sm">
             {actions}
+            {hasMenu && (
+              <button
+                type="button"
+                aria-expanded={menuOpen}
+                aria-controls={menuId}
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                onClick={() => setMenuOpen((v) => !v)}
+                className="-mr-1 grid h-11 w-11 place-items-center rounded-full text-text hover:bg-surface md:hidden"
+              >
+                {menuOpen ? <X size={22} aria-hidden /> : <Menu size={22} aria-hidden />}
+              </button>
+            )}
           </div>
         </div>
+
+        {/* Phone menu: the same page links as the desktop row, as large,
+            full-width tap targets, plus any account entries. */}
+        {hasMenu && menuOpen && (
+          <div id={menuId} className="border-t border-border px-3 pb-3 pt-2 md:hidden">
+            <ul className="flex flex-col gap-0.5">
+              {links!.map((link) => (
+                <li key={link.href}>
+                  {isAnchor(link.href) ? (
+                    <a href={link.href} className={menuLinkClass}>
+                      {link.label}
+                    </a>
+                  ) : (
+                    <NavLink
+                      to={link.href}
+                      className={({ isActive }) =>
+                        isActive ? `${menuLinkClass} bg-surface font-semibold` : menuLinkClass
+                      }
+                    >
+                      {link.label}
+                    </NavLink>
+                  )}
+                </li>
+              ))}
+            </ul>
+            {menuFooter && (
+              <div className="mt-2 border-t border-border pt-3">{menuFooter}</div>
+            )}
+          </div>
+        )}
       </nav>
     </div>
   );

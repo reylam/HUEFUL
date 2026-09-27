@@ -17,7 +17,7 @@ export function ProfileQuickSet() {
   return (
     <section
       aria-labelledby="profile-heading"
-      className="rounded-card border border-border bg-surface-raised p-5"
+      className="rounded-card border border-border bg-surface-raised shadow-card p-5"
     >
       <h2 id="profile-heading" className="text-lg font-semibold text-text">
         How do you see color?
@@ -28,7 +28,7 @@ export function ProfileQuickSet() {
           : "Set this once and explanations adapt to you."}
       </p>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="fill-last-odd mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
         {CVD_PROFILES.map((option) => {
           const selected = option.id === profile;
           return (
@@ -38,7 +38,7 @@ export function ProfileQuickSet() {
               aria-pressed={selected}
               onClick={() => setProfile(option.id)}
               className={[
-                "inline-flex min-h-10 items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium transition-colors",
+                "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border px-3.5 text-sm font-medium transition-colors",
                 selected
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border text-text-muted hover:text-text",

@@ -15,7 +15,7 @@ export function RecentColors() {
   return (
     <section
       aria-labelledby="recent-heading"
-      className="rounded-card border border-border bg-surface-raised p-5"
+      className="rounded-card border border-border bg-surface-raised shadow-card p-5"
     >
       <h2 id="recent-heading" className="text-lg font-semibold text-text">
         Your saved colors

@@ -51,6 +51,16 @@ export function PublicLayout() {
       <Suspense fallback={null}>
         <FloatingNav
           links={navLinks}
+          menuFooter={
+            user ? null : (
+              <NavLink
+                to="/login"
+                className="flex min-h-12 items-center justify-center rounded-2xl border border-border bg-surface-raised px-4 text-base font-semibold text-text hover:bg-surface"
+              >
+                Log in
+              </NavLink>
+            )
+          }
           brand={
             <NavLink to="/" className="flex items-center" aria-label="HUEFUL home">
               <img
@@ -58,7 +68,7 @@ export function PublicLayout() {
                 alt="HUEFUL"
                 width={360}
                 height={120}
-                className="h-7 w-auto"
+                className="brand-logo h-7 w-auto"
               />
             </NavLink>
           }
@@ -66,21 +76,22 @@ export function PublicLayout() {
             user ? (
               <NavLink
                 to="/dashboard"
-                className="rounded-full bg-primary px-4 py-1.5 font-semibold text-primary-foreground hover:brightness-110"
+                className="inline-flex min-h-10 items-center rounded-full bg-primary px-4 font-semibold text-primary-foreground hover:brightness-110"
               >
                 Open app
               </NavLink>
             ) : (
               <>
+                {/* On phones "Log in" moves into the menu to keep the bar calm. */}
                 <NavLink
                   to="/login"
-                  className="rounded-full px-3 py-1.5 font-medium text-text-muted hover:text-text"
+                  className="hidden rounded-full px-3 py-1.5 font-medium text-text-muted hover:text-text sm:inline-flex"
                 >
                   Log in
                 </NavLink>
                 <NavLink
                   to="/register"
-                  className="rounded-full bg-primary px-4 py-1.5 font-semibold text-primary-foreground hover:brightness-110"
+                  className="inline-flex min-h-10 items-center rounded-full bg-primary px-4 font-semibold text-primary-foreground hover:brightness-110"
                 >
                   Get started
                 </NavLink>
@@ -105,7 +116,7 @@ export function PublicLayout() {
               alt="HUEFUL"
               width={360}
               height={120}
-              className="h-7 w-auto self-start"
+              className="brand-logo h-7 w-auto self-start"
             />
             <p className="max-w-xs">
               A color assistant built for people with color vision deficiency.

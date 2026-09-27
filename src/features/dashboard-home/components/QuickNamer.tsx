@@ -39,7 +39,7 @@ export function QuickNamer() {
   return (
     <section
       aria-labelledby="quick-namer-heading"
-      className="rounded-card border border-border bg-surface-raised p-5"
+      className="rounded-card border border-border bg-surface-raised shadow-card p-5"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="quick-namer-heading" className="text-lg font-semibold text-text">
@@ -117,7 +117,7 @@ export function QuickNamer() {
           </button>
         </div>
       ) : (
-        <p role="alert" className="mt-4 text-status-danger">
+        <p role="alert" className="mt-4 text-status-danger-ink">
           That doesn't look like a valid color. Try again.
         </p>
       )}

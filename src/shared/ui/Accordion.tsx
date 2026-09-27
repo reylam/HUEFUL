@@ -133,7 +133,7 @@ function AccordionRow({
   }, [isOpen]);
 
   return (
-    <div className="overflow-hidden rounded-card border border-border bg-surface-raised">
+    <div className="overflow-hidden rounded-card border border-border bg-surface-raised shadow-card">
       <h3>
         <button
           type="button"

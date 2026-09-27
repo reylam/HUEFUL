@@ -101,7 +101,7 @@ function SavedColorCard({
   };
 
   return (
-    <div className="flex flex-col gap-3 rounded-card border border-border bg-surface-raised p-4">
+    <div className="flex flex-col gap-3 rounded-card border border-border bg-surface-raised shadow-card p-4">
       <div className="flex items-center gap-3">
         <span
           aria-hidden
@@ -127,7 +127,7 @@ function SavedColorCard({
               <button
                 type="submit"
                 aria-label="Save name"
-                className="grid h-8 w-8 place-items-center rounded-lg text-status-unripe hover:bg-surface"
+                className="grid h-8 w-8 place-items-center rounded-lg text-status-unripe-ink hover:bg-surface"
               >
                 <Check size={16} aria-hidden />
               </button>
@@ -219,7 +219,7 @@ function CardAction({
       className={[
         "inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium transition-colors",
         danger
-          ? "text-text-muted hover:bg-status-danger/15 hover:text-status-danger"
+          ? "text-text-muted hover:bg-status-danger/15 hover:text-status-danger-ink"
           : "text-text-muted hover:bg-surface hover:text-text",
       ].join(" ")}
     >

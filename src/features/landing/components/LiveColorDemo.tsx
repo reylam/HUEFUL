@@ -119,7 +119,7 @@ export function LiveColorDemo({ embedded = false }: LiveColorDemoProps) {
 
       <div className="mt-6 grid gap-6 md:grid-cols-2">
         <div className="flex flex-col gap-3">
-          <div className="relative aspect-square w-full overflow-hidden rounded-card border border-border bg-surface-raised">
+          <div className="relative aspect-square w-full overflow-hidden rounded-card border border-border bg-surface-sunken sm:aspect-[4/3]">
             {mode === "camera" ? (
               <>
                 <Webcam
@@ -158,7 +158,7 @@ export function LiveColorDemo({ embedded = false }: LiveColorDemoProps) {
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="grid gap-2 sm:flex sm:flex-wrap">
             {mode === "camera" ? (
               <>
                 <Button onClick={sampleFromCamera}>Read color</Button>
@@ -195,7 +195,7 @@ export function LiveColorDemo({ embedded = false }: LiveColorDemoProps) {
           {color ? (
             <div
               aria-live="polite"
-              className="rounded-card border border-border bg-surface-raised p-5"
+              className="rounded-card border border-border bg-surface-raised shadow-card p-5"
             >
               <div className="flex items-center gap-4">
                 <span

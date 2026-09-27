@@ -1,70 +1,144 @@
 @import "tailwindcss";
 
 /*
-  Design tokens for all_eyes. CVD-safe by construction:
+  Design tokens for HUEFUL. CVD-safe by construction:
   - status colors are separated by LUMINANCE, not only hue, so they stay
     distinguishable under any color vision deficiency (and in grayscale).
   - every status also gets paired with a text label + icon in the UI; color
     is never the only signal (see the design-system reference).
-  Dark theme is the default because the tool is often used outdoors and a dark
-  UI keeps captured colors readable.
+
+  LIGHT is the default theme. The logo is navy ink with a cyan-blue and orange
+  mark, and it was drawn for a light ground: on white the wordmark reads at full
+  strength and the brand tones sit where the logo puts them. Dark is an opt-in
+  override (Settings > Appearance, or "System") defined under [data-theme="dark"]
+  below. Components only ever reference these roles, never raw hex, so both
+  themes come from this one file.
+
+  Every text role below was checked against surface, surface-raised and
+  surface-sunken: text/brand/status-ink all clear 4.5:1 (WCAG AA body text),
+  border-strong clears 3:1 (UI boundaries).
 */
 
 @theme {
-  /* surfaces & text */
-  --color-surface: #0b0f14;
-  --color-surface-raised: #151b23;
-  --color-surface-sunken: #070a0e;
-  --color-border: #2a333d;
-  --color-text: #f4f7fa;
-  --color-text-muted: #a7b2be;
+  /* surfaces & text: cool neutrals tinted toward the brand navy, never grey */
+  --color-surface: #f6f8fb;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #edf1f6;
+  --color-border: #dbe3ec;
+  /* for controls that must be seen as a boundary (switch tracks, inputs) */
+  --color-border-strong: #7a889c;
+  --color-text: #0c2340; /* navy ink, the logo's wordmark tone */
+  --color-text-muted: #4b5d74;
 
   /*
-    Brand palette taken straight from the HUEFUL logo: deep navy, bright cyan-
-    blue, and a warm orange badge. The cyan-blue reads brightest on the dark UI
-    so it is the primary action; the orange is the warm informational accent.
-    Cyan-blue and orange sit far apart in both hue AND luminance, so the pairing
-    stays distinguishable under every color vision deficiency and in grayscale.
-    Navy is a supporting brand tone for deep fills and badges.
+    Brand palette from the HUEFUL logo: deep navy, cyan-blue, warm orange. On a
+    light ground the logo's bright cyan (#0aa2e6) is only 2.9:1 against white,
+    so the action blue is the same hue taken deep enough to carry white labels
+    and link text (5.2:1+). Same story for the orange. Blue and orange sit far
+    apart in hue AND luminance, so the pair survives every CVD and grayscale.
   */
-  --color-primary: #0aa2e6; /* logo cyan-blue */
-  --color-primary-foreground: #04121c;
+  --color-primary: #086cad;
+  --color-primary-foreground: #ffffff;
 
-  /* informational / warm accent: the logo's orange badge */
-  --color-accent: #ff7a2f;
-  --color-accent-foreground: #1a0c02;
+  /* informational / warm accent: the logo's orange badge, deepened for text */
+  --color-accent: #b5480a;
+  --color-accent-foreground: #ffffff;
 
   /* deep brand navy from the logo's dark H, for badges and deep fills */
   --color-brand-navy: #0a3a78;
   --color-brand-navy-foreground: #eaf3ff;
 
-  /* focus ring: bright cyan from the logo, distinct from the orange accent, never removed */
-  --color-focus: #38bdf8;
+  /* focus ring: the action blue, never removed */
+  --color-focus: #0a7fcc;
 
   /*
-    Status scale: a bright -> dark LUMINANCE spread so the steps are separable
-    without relying on hue (holds under any CVD and in grayscale). Each status
-    is always paired with an icon + text label in components, never used alone.
-    These stay off the brand hues (cyan / orange) so a status never reads as a
-    primary or accent action.
+    Status FILLS (swatches, dots, tints): a bright -> dark LUMINANCE spread so
+    the steps separate without relying on hue. Each status is always paired
+    with an icon + text label in components, never used alone. They stay off
+    the brand hues so a status never reads as a primary or accent action.
       ripe     = bright yellow-green   (highest luminance)
       unripe   = mid teal-green
       overripe = dark brown            (lowest luminance)
   */
   --color-status-ripe: #d9e021;
-  --color-status-unripe: #2dd4bf;
+  --color-status-unripe: #14b8a6;
   --color-status-overripe: #78350f;
-  --color-status-warning: #eab308; /* amber-yellow, kept distinct from the orange accent */
-  --color-status-danger: #f43f5e;
+  --color-status-warning: #eab308;
+  --color-status-danger: #e11d48;
   --color-status-uncertain: #94a3b8;
+
+  /*
+    Status INKS: the same hues deep enough to be read as text on a light
+    ground (a bright yellow-green label on white would be illegible). In dark
+    mode they collapse back onto the bright fills.
+  */
+  --color-status-ripe-ink: #5b6300;
+  --color-status-unripe-ink: #0f766e;
+  --color-status-warning-ink: #8a5300;
+  --color-status-danger-ink: #be123c;
+
+  /*
+    Elevation. Tailwind inlines literal shadow values into the utility, which
+    would defeat the dark override, so the utilities point at plain variables
+    (--elevation-*, set per theme below) instead.
+  */
+  --shadow-card: var(--elevation-card);
+  --shadow-float: var(--elevation-float);
 
   /* radii & typography */
   --radius-card: 1rem;
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
+/* `dark:` utilities follow the app's theme choice, not only the OS setting. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
+  color-scheme: light;
+  /* layered, low-opacity, navy-tinted */
+  --elevation-card: 0 1px 2px rgb(12 35 64 / 0.05), 0 2px 8px -2px rgb(12 35 64 / 0.06);
+  --elevation-float: 0 1px 2px rgb(12 35 64 / 0.06), 0 12px 32px -12px rgb(12 35 64 / 0.22);
+}
+
+/*
+  Dark theme: the original low-glare palette, for outdoor use and people who
+  prefer it. Elevation comes from lighter surfaces, not heavier shadows.
+*/
+:root[data-theme="dark"] {
   color-scheme: dark;
+
+  --color-surface: #0b0f14;
+  --color-surface-raised: #151b23;
+  --color-surface-sunken: #070a0e;
+  --color-border: #2a333d;
+  --color-border-strong: #5b6878;
+  --color-text: #eef2f6;
+  --color-text-muted: #a7b2be;
+
+  /* on a dark ground the logo's own bright cyan and orange read at full strength */
+  --color-primary: #0aa2e6;
+  --color-primary-foreground: #04121c;
+  --color-accent: #ff7a2f;
+  --color-accent-foreground: #1a0c02;
+  --color-focus: #38bdf8;
+
+  --color-status-unripe: #2dd4bf;
+  --color-status-danger: #f43f5e;
+  --color-status-ripe-ink: #d9e021;
+  --color-status-unripe-ink: #2dd4bf;
+  --color-status-warning-ink: #eab308;
+  --color-status-danger-ink: #f43f5e;
+
+  --elevation-card: 0 0 #0000;
+  --elevation-float: 0 12px 40px -10px rgb(0 0 0 / 0.6);
+}
+
+/*
+  The wordmark is navy ink on a transparent ground. On the dark theme that ink
+  would vanish, so it switches to the standard single-color knockout (white).
+*/
+:root[data-theme="dark"] .brand-logo {
+  filter: brightness(0) invert(1);
 }
 
 html,
@@ -97,6 +171,17 @@ body {
     env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
+/*
+  Mobile option groups lay out as an even 2-column grid. With an odd count the
+  last item would sit alone at half width, so it spans the full row instead.
+  Harmless once a group switches to flex at wider sizes.
+*/
+@utility fill-last-odd {
+  & > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
 /* Visible focus is a hard requirement, not a default we override. */
 :focus-visible {
   outline: 2px solid var(--color-focus);
@@ -122,6 +207,33 @@ body {
 
 .animate-page-in {
   animation: page-in 0.18s ease-out both;
+}
+
+/*
+  Bottom sheet (mobile "More" menu): rises from the bottom edge while the
+  backdrop fades in. Enter only; closing is instant so it never lags a tap.
+*/
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.sheet[open] {
+  animation: sheet-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.sheet[open]::backdrop {
+  animation: fade-in 0.2s ease-out both;
 }
 
 /*
@@ -202,8 +314,15 @@ body {
   font-size: 18px;
 }
 
-/* Higher contrast: stronger borders and brighter muted text on the dark UI. */
-.pref-high-contrast {
+/* Higher contrast: stronger borders and muted text pushed toward full ink. */
+:root.pref-high-contrast {
+  --color-border: #9aa8ba;
+  --color-border-strong: #56657a;
+  --color-text-muted: #2c3e55;
+}
+
+:root[data-theme="dark"].pref-high-contrast {
   --color-border: #4a5764;
+  --color-border-strong: #7b8898;
   --color-text-muted: #cbd3db;
 }

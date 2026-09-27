@@ -72,8 +72,8 @@ export function HeroCentered() {
           ref={mascotRef}
           src={mascot}
           alt=""
-          width={288}
-          height={288}
+          width={320}
+          height={320}
           className="h-32 w-32 sm:h-40 sm:w-40"
         />
         <p className="max-w-14rem text-sm font-medium text-text-muted">
@@ -94,7 +94,9 @@ export function HeroCentered() {
         It's built for people who can't rely on color alone.
       </p>
 
-      <div data-hero className="flex flex-col gap-3 sm:flex-row">
+      {/* Phones: two equal, full-width buttons (thumb-sized, one clear
+          primary). From sm up they sit side by side at natural width. */}
+      <div data-hero className="flex w-full max-w-sm flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row">
         <Link
           to="/register"
           className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-primary px-7 text-base font-semibold text-primary-foreground hover:brightness-110"
@@ -103,7 +105,7 @@ export function HeroCentered() {
         </Link>
         <Link
           to="/login"
-          className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border px-7 text-base font-semibold text-text hover:bg-surface-raised"
+          className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-surface-raised px-7 text-base font-semibold text-text hover:bg-surface-sunken"
         >
           I already have an account
         </Link>

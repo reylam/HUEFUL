@@ -89,7 +89,11 @@ export function DashboardHome() {
           </Reveal>
         )}
 
-        <ul className="grid gap-3 sm:grid-cols-2">
+        {/* Phones: a 2-up tile grid (icon + name) that scans at a glance.
+            From sm up there's room for the state tag and summary too.
+            Rows (not stacked tiles) so an odd last tile spanning the full
+            width still looks deliberate. */}
+        <ul className="fill-last-odd grid grid-cols-2 gap-3">
           {rest.map((lens, i) => {
             const Icon = lensIcons[lens.path] ?? ScanLine;
             return (
@@ -97,28 +101,28 @@ export function DashboardHome() {
                 <Reveal delay={Math.min(i * 0.05, 0.25)}>
                   <Link
                     to={`/dashboard/${lens.path}`}
-                    className="group flex h-full items-start gap-3 rounded-card border border-border bg-surface-raised p-4 transition-colors hover:border-primary hover:bg-surface"
+                    className="group flex h-full items-center gap-3 rounded-card border border-border bg-surface-raised p-3 shadow-card transition-colors hover:border-primary hover:bg-surface active:bg-surface-sunken sm:items-start sm:p-4"
                   >
-                    <Icon
-                      size={20}
-                      aria-hidden
-                      className="mt-0.5 shrink-0 text-text-muted transition-colors group-hover:text-primary"
-                    />
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-surface-sunken text-primary sm:h-auto sm:w-auto sm:bg-transparent sm:text-text-muted sm:transition-colors sm:group-hover:text-primary">
+                      <Icon size={20} aria-hidden className="sm:mt-0.5" />
+                    </span>
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center justify-between gap-2">
-                        <span className="font-semibold text-text">
+                        <span className="text-sm font-semibold leading-snug text-text sm:text-base">
                           {lens.label}
                         </span>
-                        <StateTag state={lens.state} />
+                        <span className="hidden sm:inline-flex">
+                          <StateTag state={lens.state} />
+                        </span>
                       </span>
-                      <span className="mt-0.5 block text-sm text-text-muted">
+                      <span className="mt-0.5 hidden text-sm text-text-muted sm:block">
                         {lens.summary}
                       </span>
                     </span>
                     <ArrowRight
                       size={16}
                       aria-hidden
-                      className="mt-1 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5"
+                      className="mt-1 hidden shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5 sm:block"
                     />
                   </Link>
                 </Reveal>
@@ -136,9 +140,15 @@ function FeaturedTool({ lens }: { lens: (typeof lenses)[number] }) {
   return (
     <Link
       to={`/dashboard/${lens.path}`}
-      className="group flex flex-col gap-4 rounded-card border border-border bg-surface-raised p-6 transition-colors hover:border-primary sm:flex-row sm:items-center sm:gap-6"
+      className="group flex items-center gap-4 rounded-card border border-border bg-surface-raised p-4 shadow-card transition-colors hover:border-primary active:bg-surface-sunken sm:gap-6 sm:p-6"
     >
-      <BrandMark tone="primary" size="lg" icon={<Icon size={30} aria-hidden />} />
+      {/* Phones: a compact row (mark, text, chevron) that the whole card
+          taps into. From sm up the mark grows and a labelled Open button shows. */}
+      <BrandMark
+        tone="primary"
+        size="fluid"
+        icon={<Icon size={26} aria-hidden />}
+      />
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-accent">
@@ -146,14 +156,15 @@ function FeaturedTool({ lens }: { lens: (typeof lenses)[number] }) {
           </span>
           <StateTag state={lens.state} />
         </span>
-        <span className="mt-1 block text-xl font-bold text-text">
+        <span className="mt-0.5 block text-lg font-bold text-text sm:mt-1 sm:text-xl">
           {lens.label}
         </span>
-        <span className="mt-1 block max-w-md text-text-muted">
+        <span className="mt-1 line-clamp-2 max-w-md text-sm text-text-muted sm:line-clamp-none sm:text-base">
           {lens.summary}
         </span>
       </span>
-      <span className="inline-flex items-center gap-1 self-start rounded-2xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform group-hover:translate-x-0.5 sm:self-center">
+      <ArrowRight size={20} aria-hidden className="shrink-0 text-primary sm:hidden" />
+      <span className="hidden items-center gap-1 rounded-2xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform group-hover:translate-x-0.5 sm:inline-flex">
         Open
         <ArrowRight size={16} aria-hidden />
       </span>

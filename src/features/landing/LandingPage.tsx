@@ -113,7 +113,7 @@ export function LandingPage() {
         >
           Point, and read the color in words
         </h2>
-        <div className="mt-6 overflow-hidden rounded-card border border-border bg-surface-raised">
+        <div className="mt-6 overflow-hidden rounded-card border border-border bg-surface-raised shadow-card">
           <LiveColorDemo embedded />
         </div>
       </section>
@@ -158,17 +158,27 @@ export function LandingPage() {
         <h2 id="how-heading" className="text-2xl font-bold text-text">
           How it works
         </h2>
-        <ol className="mt-6 grid gap-6 sm:grid-cols-3">
-          {steps.map((step) => (
-            <li key={step.n} className="flex flex-col gap-2">
+        {/* Phones: a vertical stepper (number left, a thin rail joining the
+            steps). From sm up: three columns. */}
+        <ol className="mt-6 grid gap-5 sm:grid-cols-3 sm:gap-6">
+          {steps.map((step, i) => (
+            <li key={step.n} className="relative flex gap-4 sm:flex-col sm:gap-2">
+              {i < steps.length - 1 && (
+                <span
+                  aria-hidden
+                  className="absolute bottom-[-1.25rem] left-[1.125rem] top-10 w-px bg-border sm:hidden"
+                />
+              )}
               <span
                 aria-hidden
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary text-sm font-bold text-text"
+                className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-primary bg-surface text-sm font-bold text-text"
               >
                 {step.n}
               </span>
-              <h3 className="text-lg font-semibold text-text">{step.title}</h3>
-              <p className="text-text-muted">{step.text}</p>
+              <span className="flex flex-col gap-1 pt-1 sm:gap-2 sm:pt-0">
+                <h3 className="text-lg font-semibold text-text">{step.title}</h3>
+                <p className="text-text-muted">{step.text}</p>
+              </span>
             </li>
           ))}
         </ol>

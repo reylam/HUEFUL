@@ -12,6 +12,8 @@ const sizeClass = {
   sm: "h-8 w-8 rounded-lg",
   md: "h-10 w-10 rounded-xl",
   lg: "h-16 w-16 rounded-2xl",
+  /** Compact on phones, lg from sm up (e.g. the featured tool row). */
+  fluid: "h-12 w-12 rounded-xl sm:h-16 sm:w-16 sm:rounded-2xl",
 } as const;
 
 interface BrandMarkProps {

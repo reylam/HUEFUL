@@ -84,7 +84,7 @@ export function AboutPage() {
           <Reveal
             key={s.value}
             delay={i * 0.08}
-            className="rounded-card border border-border bg-surface-raised p-6"
+            className="rounded-card border border-border bg-surface-raised shadow-card p-6"
           >
             <p className="text-4xl font-bold text-primary">{s.value}</p>
             <p className="mt-2 text-sm text-text-muted">{s.label}</p>
@@ -122,7 +122,7 @@ export function AboutPage() {
             <Reveal
               key={title}
               delay={i * 0.06}
-              className="h-full rounded-card border border-border bg-surface-raised p-5"
+              className="h-full rounded-card border border-border bg-surface-raised shadow-card p-5"
             >
               <Icon size={24} aria-hidden className="text-accent" />
               <h3 className="mt-3 text-lg font-semibold text-text">{title}</h3>

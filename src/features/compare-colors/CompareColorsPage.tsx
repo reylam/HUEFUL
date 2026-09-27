@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check, X } from "lucide-react";
+import { Check, Pencil, X } from "lucide-react";
 import {
   hexToRgb,
   nameColor,
@@ -80,7 +80,7 @@ export function CompareColorsPage() {
       {analysis ? (
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Similarity. */}
-          <div className="rounded-card border border-border bg-surface-raised p-5">
+          <div className="rounded-card border border-border bg-surface-raised shadow-card p-5">
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">
                 Similarity
@@ -109,7 +109,7 @@ export function CompareColorsPage() {
           </div>
 
           {/* Contrast, with explicit pass/fail (text + icon). */}
-          <div className="rounded-card border border-border bg-surface-raised p-5">
+          <div className="rounded-card border border-border bg-surface-raised shadow-card p-5">
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">
                 Contrast
@@ -129,7 +129,7 @@ export function CompareColorsPage() {
           </div>
         </div>
       ) : (
-        <p role="alert" className="text-status-danger">
+        <p role="alert" className="text-status-danger-ink">
           One of those colors isn't valid. Pick another.
         </p>
       )}
@@ -156,10 +156,12 @@ function ColorPanel({
       className="relative flex aspect-[4/3] cursor-pointer flex-col justify-between p-4 transition-colors duration-500 ease-out motion-reduce:transition-none"
       style={{ backgroundColor: hex, color: readableOnSwatch }}
     >
+      {/* The pencil says "tap to change" where there is no hover to hint it. */}
       <span
-        className={`text-xs font-semibold uppercase tracking-wide opacity-80 ${align === "right" ? "text-right" : ""}`}
+        className={`flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide opacity-80 ${align === "right" ? "flex-row-reverse" : ""}`}
       >
         {label}
+        <Pencil size={12} aria-hidden />
       </span>
       <span className={align === "right" ? "text-right" : ""}>
         <span className="block text-lg font-bold">{name ?? "Custom"}</span>
@@ -191,7 +193,7 @@ function ContrastRow({
     <li className="flex items-center gap-2 text-sm">
       <span
         className={`grid h-6 w-6 shrink-0 place-items-center rounded-full ${
-          pass ? "bg-status-unripe/20 text-status-unripe" : "bg-status-danger/20 text-status-danger"
+          pass ? "bg-status-unripe/20 text-status-unripe-ink" : "bg-status-danger/20 text-status-danger-ink"
         }`}
       >
         {pass ? (

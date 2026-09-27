@@ -16,7 +16,7 @@ export function ColorResultCard({ color }: ColorResultCardProps) {
   return (
     <section
       aria-label="Color result"
-      className="rounded-card border border-border bg-surface-raised p-5"
+      className="rounded-card border border-border bg-surface-raised shadow-card p-5"
     >
       <div className="flex items-center gap-4">
         <span

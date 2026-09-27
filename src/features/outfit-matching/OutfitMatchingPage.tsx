@@ -114,8 +114,10 @@ export function OutfitMatchingPage() {
 
       <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         {/* The figure is the focus. */}
-        <div className="rounded-card border border-border bg-surface-raised p-4">
-          <div className="mx-auto h-80 max-w-[16rem]">
+        {/* On phones the figure is kept small enough that it stays in view
+            above the piece and color pickers, so each tap visibly recolors it. */}
+        <div className="rounded-card border border-border bg-surface-raised shadow-card p-4">
+          <div className="mx-auto aspect-[11/18] w-full max-w-[8.5rem] sm:max-w-[13rem]">
             <OutfitFigure colors={colors} active={active} />
           </div>
         </div>
@@ -128,7 +130,7 @@ export function OutfitMatchingPage() {
               <Shirt size={16} aria-hidden className="text-accent" />
               Choose a piece
             </span>
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Outfit piece">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap" role="group" aria-label="Outfit piece">
               {ITEMS.map((item) => {
                 const selected = active === item.id;
                 return (
@@ -138,10 +140,10 @@ export function OutfitMatchingPage() {
                     aria-pressed={selected}
                     onClick={() => setActive(item.id)}
                     className={[
-                      "inline-flex min-h-10 items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition-colors",
+                      "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border px-3.5 text-sm font-medium transition-colors",
                       selected
                         ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border text-text-muted hover:text-text",
+                        : "border-border bg-surface-raised text-text-muted hover:text-text",
                     ].join(" ")}
                   >
                     <span
@@ -162,7 +164,7 @@ export function OutfitMatchingPage() {
               <PencilRuler size={16} aria-hidden className="text-accent" />
               Color the {ITEMS.find((i) => i.id === active)?.label.toLowerCase()}
             </span>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2.5">
               {PALETTE.map((hex) => {
                 const selected =
                   colors[active].toLowerCase() === hex.toLowerCase();
@@ -174,7 +176,7 @@ export function OutfitMatchingPage() {
                     aria-label={`Use ${hex}`}
                     aria-pressed={selected}
                     className={[
-                      "h-9 w-9 rounded-full border transition-transform hover:scale-110 motion-reduce:hover:scale-100",
+                      "h-11 w-11 rounded-full border transition-transform hover:scale-110 motion-reduce:hover:scale-100",
                       selected
                         ? "border-text ring-2 ring-focus"
                         : "border-border",
@@ -183,7 +185,7 @@ export function OutfitMatchingPage() {
                   >
                     {selected && (
                       <Check
-                        size={16}
+                        size={18}
                         aria-hidden
                         className="mx-auto text-white mix-blend-difference"
                       />
@@ -192,7 +194,7 @@ export function OutfitMatchingPage() {
                 );
               })}
               <label
-                className="flex h-9 cursor-pointer items-center gap-2 rounded-full border border-border px-3 text-sm text-text-muted hover:text-text"
+                className="flex h-11 cursor-pointer items-center gap-2 rounded-full border border-border bg-surface-raised px-3.5 text-sm text-text-muted hover:text-text"
                 aria-label="Custom color"
               >
                 Custom
@@ -216,10 +218,10 @@ export function OutfitMatchingPage() {
                 className={[
                   "grid h-9 w-9 shrink-0 place-items-center rounded-full",
                   verdict.tone === "good"
-                    ? "bg-status-unripe/20 text-status-unripe"
+                    ? "bg-status-unripe/20 text-status-unripe-ink"
                     : verdict.tone === "ok"
-                      ? "bg-status-warning/20 text-status-warning"
-                      : "bg-status-danger/20 text-status-danger",
+                      ? "bg-status-warning/20 text-status-warning-ink"
+                      : "bg-status-danger/20 text-status-danger-ink",
                 ].join(" ")}
               >
                 {verdict.tone === "good" ? (

@@ -90,7 +90,7 @@ export function ColorScannerPage() {
             <div
               ref={resultRef}
               aria-live="polite"
-              className="flex flex-col gap-4 rounded-card border border-border bg-surface-raised p-5"
+              className="flex flex-col gap-4 rounded-card border border-border bg-surface-raised shadow-card p-5"
             >
               <div className="flex items-center gap-4">
                 <span

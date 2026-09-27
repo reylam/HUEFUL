@@ -60,7 +60,7 @@ function CopyButton({ label, value }: { label: string; value: string }) {
       className="grid h-8 w-8 place-items-center rounded-lg text-text-muted transition-colors hover:bg-surface-raised hover:text-text"
     >
       {copied ? (
-        <Check size={15} aria-hidden className="text-status-unripe" />
+        <Check size={15} aria-hidden className="text-status-unripe-ink" />
       ) : (
         <Copy size={15} aria-hidden />
       )}

@@ -47,20 +47,26 @@ export function DashboardLayout() {
       <DashboardSideNav />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-baseline justify-between px-4 pb-2 pt-4 md:px-8 md:pt-6">
-          <img
-            src={logoIcon}
-            alt="HUEFUL"
-            width={135}
-            height={128}
-            className="h-6 w-auto md:hidden"
-          />
-          <h1 className="text-xl font-bold text-text md:text-2xl">
-            {titleFor(location.pathname)}
-          </h1>
+        {/* The title shares the content column's measure, so both start on
+            one left edge instead of the title hugging the rail. On phones it
+            is a sticky, frosted app bar so you always know which tool you are
+            in while scrolling; from md up the side rail carries that context. */}
+        <header className="sticky top-0 z-20 border-b border-border bg-surface/85 px-4 py-3 backdrop-blur-md md:static md:border-0 md:bg-transparent md:px-8 md:pb-2 md:pt-6 md:backdrop-blur-none">
+          <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3">
+            <h1 className="text-xl font-bold tracking-tight text-text md:text-2xl">
+              {titleFor(location.pathname)}
+            </h1>
+            <img
+              src={logoIcon}
+              alt="HUEFUL"
+              width={135}
+              height={128}
+              className="brand-logo h-6 w-auto md:hidden"
+            />
+          </div>
         </header>
 
-        <main id="main" className="flex-1 px-4 pb-4 md:px-8 md:pb-8">
+        <main id="main" className="flex-1 px-4 pb-6 pt-4 md:px-8 md:pb-8 md:pt-0">
           <div className="mx-auto w-full max-w-3xl">
             <Suspense fallback={<RouteFallback />}>
               <PageTransition routeKey={location.pathname}>
