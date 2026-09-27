@@ -75,3 +75,27 @@ export function rgbToHsl({ r, g, b }: RgbColor): HslColor {
     l: Math.round(l * 100),
   };
 }
+
+/** Inverse of rgbToHsl. Hue 0-360, saturation and lightness 0-100. */
+export function hslToRgb({ h, s, l }: HslColor): RgbColor {
+  const sn = s / 100;
+  const ln = l / 100;
+  const c = (1 - Math.abs(2 * ln - 1)) * sn;
+  const hp = (((h % 360) + 360) % 360) / 60;
+  const x = c * (1 - Math.abs((hp % 2) - 1));
+  let rp = 0;
+  let gp = 0;
+  let bp = 0;
+  if (hp < 1) [rp, gp, bp] = [c, x, 0];
+  else if (hp < 2) [rp, gp, bp] = [x, c, 0];
+  else if (hp < 3) [rp, gp, bp] = [0, c, x];
+  else if (hp < 4) [rp, gp, bp] = [0, x, c];
+  else if (hp < 5) [rp, gp, bp] = [x, 0, c];
+  else [rp, gp, bp] = [c, 0, x];
+  const m = ln - c / 2;
+  return clampRgb({
+    r: (rp + m) * 255,
+    g: (gp + m) * 255,
+    b: (bp + m) * 255,
+  });
+}

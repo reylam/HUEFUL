@@ -38,7 +38,7 @@ export interface Lens {
 export const lenses: Lens[] = [
   {
     path: "scan",
-    label: "Color Scanner",
+    label: "HueScan",
     navLabel: "Scan",
     Icon: ScanLine,
     summary:
