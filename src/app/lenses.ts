@@ -52,8 +52,8 @@ export const lenses: Lens[] = [
   },
   {
     path: "compare",
-    label: "Color Compare",
-    navLabel: "Compare",
+    label: "HueMatch",
+    navLabel: "Match",
     Icon: GitCompare,
     summary:
       "Check whether two colors are actually distinguishable, for you and across CVD types.",
@@ -66,7 +66,7 @@ export const lenses: Lens[] = [
   },
   {
     path: "outfit",
-    label: "Outfit Matching",
+    label: "HueDrobe",
     navLabel: "Outfit",
     Icon: Shirt,
     summary:
@@ -80,7 +80,7 @@ export const lenses: Lens[] = [
   },
   {
     path: "ripeness",
-    label: "Food Ripeness",
+    label: "HueRipe",
     navLabel: "Ripeness",
     Icon: Apple,
     summary:
@@ -94,7 +94,7 @@ export const lenses: Lens[] = [
   },
   {
     path: "simulate",
-    label: "Vision Simulator",
+    label: "HueLens",
     navLabel: "Simulate",
     Icon: Eye,
     summary:
@@ -108,7 +108,7 @@ export const lenses: Lens[] = [
   },
   {
     path: "saved",
-    label: "Saved Colors",
+    label: "HueVault",
     navLabel: "Saved",
     Icon: Bookmark,
     summary: "Keep colors you named so you can recognize them again later.",

@@ -30,24 +30,24 @@ const capabilityGroups: { id: string; label: string; items: Capability[] }[] = [
     id: "identify",
     label: "Identify",
     items: [
-      { Icon: ScanLine, name: "Color Scanner", text: "Name any color in plain words." },
-      { Icon: Eye, name: "Vision Simulator", text: "Preview how a color looks with CVD." },
+      { Icon: ScanLine, name: "HueScan", text: "Name any color in plain words." },
+      { Icon: Eye, name: "HueLens", text: "Preview how a color looks with CVD." },
     ],
   },
   {
     id: "match",
     label: "Match",
     items: [
-      { Icon: GitCompare, name: "Color Compare", text: "See if two colors really differ." },
-      { Icon: Shirt, name: "Outfit Matching", text: "Check if clothes go together." },
+      { Icon: GitCompare, name: "HueMatch", text: "See if two colors really differ." },
+      { Icon: Shirt, name: "HueDrobe", text: "Check if clothes go together." },
     ],
   },
   {
     id: "everyday",
     label: "Everyday",
     items: [
-      { Icon: Apple, name: "Food Ripeness", text: "Tell ripe from unripe produce." },
-      { Icon: Bookmark, name: "Saved Colors", text: "Remember colors that matter." },
+      { Icon: Apple, name: "HueRipe", text: "Tell ripe from unripe produce." },
+      { Icon: Bookmark, name: "HueVault", text: "Remember colors that matter." },
     ],
   },
 ];

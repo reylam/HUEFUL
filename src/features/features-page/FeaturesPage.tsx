@@ -35,13 +35,13 @@ const groups: { id: string; label: string; blurb: string; items: Feature[] }[] =
       {
         path: "scan",
         Icon: ScanLine,
-        name: "Color Scanner",
+        name: "HueScan",
         text: "Point your camera or pick a pixel and get the color named in plain language, with a CVD-aware breakdown.",
       },
       {
         path: "simulate",
         Icon: Eye,
-        name: "Vision Simulator",
+        name: "HueLens",
         text: "Preview how any color reads under different types of color vision deficiency, side by side.",
       },
     ],
@@ -54,13 +54,13 @@ const groups: { id: string; label: string; blurb: string; items: Feature[] }[] =
       {
         path: "compare",
         Icon: GitCompare,
-        name: "Color Compare",
+        name: "HueMatch",
         text: "Check whether two colors are actually distinguishable, for you and across CVD types.",
       },
       {
         path: "outfit",
         Icon: Shirt,
-        name: "Outfit Matching",
+        name: "HueDrobe",
         text: "Take a photo of your outfit and find out whether it goes together, with suggestions in words, not just swatches.",
       },
     ],
@@ -73,13 +73,13 @@ const groups: { id: string; label: string; blurb: string; items: Feature[] }[] =
       {
         path: "ripeness",
         Icon: Apple,
-        name: "Food Ripeness",
+        name: "HueRipe",
         text: "Judge how ripe produce is from its color, with clear labels and icons, never color alone.",
       },
       {
         path: "saved",
         Icon: Bookmark,
-        name: "Saved Colors",
+        name: "HueVault",
         text: "Keep the colors that matter to you, named and organized, so you can recall them later.",
       },
     ],
