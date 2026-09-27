@@ -47,11 +47,11 @@ const STEP_TEXT: Record<TutorialStep, { title: string; body: string }> = {
   },
   frame: {
     title: "Frame your whole outfit",
-    body: "The camera shows a Top and a Bottom box. The scan reads the colors inside them, so a good frame means a good read.",
+    body: "The camera shows a Top and a Bottom box. Keep your whole outfit in view: the scan finds your top and legs on its own, and reads inside the boxes if it can't.",
   },
   markers: {
     title: "Check the markers",
-    body: "After the scan, a Top and a Bottom marker show where each color was read. If one lands on skin or the wall, tap the right spot on the photo (or use the arrow keys) to move it.",
+    body: "After the scan, the area each color was read from stays bright and the rest dims, with a Top and a Bottom marker on it. If one lands on skin or the wall, tap the right spot on the photo (or use the arrow keys) to move it.",
   },
 };
 

@@ -2,9 +2,10 @@ import { DEFAULT_POINTS, PIECES } from "../outfit-engine";
 
 /*
   Camera overlay for framing an outfit: a labeled zone for the top and one for
-  the bottom. Each zone is centered on the spot the scan reads first, so lining
-  the clothes up with the zones means the first scan lands on fabric. Labels are
-  words, so the guide never depends on seeing color.
+  the bottom. The body segmenter finds the clothes wherever they are, but each
+  zone is centered on the spot the scan falls back to when it can't, so lining
+  the clothes up with the zones means even that read lands on fabric. Labels
+  are words, so the guide never depends on seeing color.
 */
 export function OutfitGuide() {
   return (
