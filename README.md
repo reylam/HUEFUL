@@ -19,7 +19,8 @@ src/
   app/                 shell, routing, bottom nav, lens registry
   features/
     color-scanner/     name a color (working prototype)
-    food-ripeness/     ripe/unripe verdict (scaffolded)
+    food-ripeness/     HueRipe: ripeness from skin color, COCO-SSD locates the fruit
+    outfit-matching/   HueDrobe: BodyPix finds the top (torso) and bottom (thighs)
     compare-colors/    same/different (scaffolded)
     cvd-simulator/     preview a color per CVD type (working)
   shared/
@@ -36,6 +37,9 @@ src/
   a bare hex.
 - **Mobile-first** — designed at phone width, thumb-reachable bottom nav, 44px
   targets, 16px base text.
-- **Performance** — each lens is a lazy-loaded route.
+- **Performance** — each lens is a lazy-loaded route. TensorFlow.js and its
+  models load only on a lens's first scan and run on-device; photos are never
+  uploaded. The models are fetched from Google's tfjs-models storage, so the
+  first scan needs a connection (the lens falls back and says so without one).
 - **Prototype vs production** — placeholders and mocks are labelled; see the
   `ComingSoon` note on scaffolded lenses.

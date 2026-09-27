@@ -13,7 +13,9 @@ import type { CvdType, RgbColor } from "@/shared/color-engine";
   The outfit engine, kept free of React so the page only renders. It runs the
   three steps that follow a photo:
 
-  1. Scan:      read the main color of each garment from a spot on the photo.
+  1. Scan:      read the main color of each garment, from the region the body
+                segmenter found (see garment-regions.ts) or from a spot on
+                the photo.
   2. Judge:     decide whether the top and bottom go together, and say why.
   3. Recommend: name wardrobe colors that would fix or finish the outfit.
 
@@ -35,10 +37,11 @@ export interface Point {
 }
 
 /*
-  Where each piece is read when the outfit is framed as the camera guide asks:
-  standing, centered, head near the top. The bottom point sits at the hips
-  rather than mid-leg so it lands on fabric, not the gap between the legs.
-  Uploads rarely line up exactly, which is why both points can be moved.
+  Where each piece is read when the body segmenter can't find it (or can't
+  load): the outfit framed as the camera guide asks, standing, centered, head
+  near the top. The bottom point sits at the hips rather than mid-leg so it
+  lands on fabric, not the gap between the legs. Uploads rarely line up
+  exactly, which is why both points can be moved.
 */
 export const DEFAULT_POINTS: Record<Piece, Point> = {
   top: { x: 0.5, y: 0.35 },
@@ -66,8 +69,8 @@ export function preparePhoto(source: HTMLCanvasElement): HTMLCanvasElement {
 export interface PieceScan {
   rgb: RgbColor;
   /**
-    Share of the spot (0-1) that is the main color. Low means a print, a
-    pattern, or a shadow crossing the spot.
+    Share of the spot or region (0-1) that is the main color. Low means a
+    print, a pattern, or a shadow crossing it.
   */
   coverage: number;
 }
@@ -86,16 +89,7 @@ const clamp = (value: number, min: number, max: number) =>
 const bucketOf = (r: number, g: number, b: number) =>
   ((r >> 5) << 6) | ((g >> 5) << 3) | (b >> 5);
 
-/*
-  Read the main color around a point. A plain average would blend a print, a
-  fold's shadow, or a strip of background into a muddy color nobody is wearing.
-
-  Instead we bucket the pixels coarsely and find the densest neighborhood of
-  buckets. Counting neighbors matters: camera noise spreads one fabric color
-  across several adjacent buckets, while a flat background lands in one, and a
-  single-bucket count would wrongly crown the background. From that seed, a few
-  mean-shift steps settle on the average of the pixels near the main color.
-*/
+/** Read the main color in a square spot around a point. */
 export function scanPiece(
   canvas: HTMLCanvasElement,
   point: Point,
@@ -109,7 +103,49 @@ export function scanPiece(
   );
   const x = clamp(Math.round(point.x * canvas.width - side / 2), 0, canvas.width - side);
   const y = clamp(Math.round(point.y * canvas.height - side / 2), 0, canvas.height - side);
-  const { data } = ctx.getImageData(x, y, side, side);
+  return mainColor(ctx.getImageData(x, y, side, side).data);
+}
+
+/*
+  Read the main color of a garment region: every pixel whose mask entry is set.
+  The mask is row-major at the photo's size, as garment-regions.ts builds it
+  from the body segmenter's part map.
+*/
+export function scanRegion(
+  canvas: HTMLCanvasElement,
+  mask: Uint8Array,
+): PieceScan | null {
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  const { width, height } = canvas;
+  if (!ctx || !width || !height || mask.length !== width * height) return null;
+
+  const { data } = ctx.getImageData(0, 0, width, height);
+  let count = 0;
+  for (let i = 0; i < mask.length; i++) count += mask[i];
+  const picked = new Uint8ClampedArray(count * 4);
+  for (let i = 0, j = 0; i < mask.length; i++) {
+    if (!mask[i]) continue;
+    picked[j++] = data[i * 4];
+    picked[j++] = data[i * 4 + 1];
+    picked[j++] = data[i * 4 + 2];
+    picked[j++] = 255;
+  }
+  return mainColor(picked);
+}
+
+/*
+  The main color of a set of RGBA pixels. A plain average would blend a print,
+  a fold's shadow, or a strip of background into a muddy color nobody is
+  wearing.
+
+  Instead we bucket the pixels coarsely and find the densest neighborhood of
+  buckets. Counting neighbors matters: camera noise spreads one fabric color
+  across several adjacent buckets, while a flat background lands in one, and a
+  single-bucket count would wrongly crown the background. From that seed, a few
+  mean-shift steps settle on the average of the pixels near the main color,
+  and litSide then reads that fabric where the light falls on it.
+*/
+function mainColor(data: Uint8ClampedArray): PieceScan | null {
   const total = data.length / 4;
   if (!total) return null;
 
@@ -174,9 +210,86 @@ export function scanPiece(
     near = n;
   }
 
-  return {
+  const main = {
     rgb: { r: Math.round(seed.r), g: Math.round(seed.g), b: Math.round(seed.b) },
     coverage: near / total,
+  };
+  return litSide(data, main.rgb) ?? main;
+}
+
+/** HSV saturation (0-1) from which a fabric has a hue that survives shade. */
+const CHROMATIC = 0.25;
+/** Hue gap, in degrees, within which a pixel is the same fabric, lit or shaded. */
+const SAME_HUE = 20;
+/** HSV saturation gap within which a pixel is the same fabric, lit or shaded. */
+const SAME_SATURATION = 0.2;
+/** Below this brightness (0-255) a pixel's hue is mostly noise. */
+const MIN_VALUE = 16;
+/**
+  How many times darker shade can make a neutral fabric. Wide enough that a
+  white shirt in shadow stays white, narrow enough that a black coat and the
+  white shirt under it stay two fabrics.
+*/
+const SHADE_RATIO = 2.5;
+/** Brightness band read as the fabric's color: its lit side, short of highlights. */
+const LIT_FROM = 0.6;
+const LIT_TO = 0.85;
+
+/** HSV saturation, 0-1. Unlike HSL's, it stays put when shade darkens a color. */
+const saturationOf = (r: number, g: number, b: number) => {
+  const max = Math.max(r, g, b);
+  return max ? (max - Math.min(r, g, b)) / max : 0;
+};
+
+/*
+  Shade darkens a fabric without changing its hue or its HSV saturation, so
+  folds and the side turned from the light split one color into several
+  clusters, and the darker one often wins: bright blue jeans read as navy, a
+  white shirt as gray. So we gather every pixel of the main color's fabric,
+  lit or shaded, and report its lit side, the color people name. A colorful
+  fabric is its hue and saturation; a neutral has no hue, so it is its lack of
+  saturation within a shade's reach of the main color's brightness.
+*/
+function litSide(data: Uint8ClampedArray, main: RgbColor): PieceScan | null {
+  const saturation = saturationOf(main.r, main.g, main.b);
+  const neutral = saturation < CHROMATIC;
+  const hue = rgbToHsl(main).h;
+  const brightness = Math.max(main.r, main.g, main.b);
+
+  const same: number[] = [];
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const value = Math.max(r, g, b);
+    const s = saturationOf(r, g, b);
+    const sameFabric = neutral
+      ? s < CHROMATIC &&
+        value * SHADE_RATIO >= brightness &&
+        value <= brightness * SHADE_RATIO
+      : value >= MIN_VALUE &&
+        Math.abs(s - saturation) <= SAME_SATURATION &&
+        hueDistance(rgbToHsl({ r, g, b }).h, hue) <= SAME_HUE;
+    if (sameFabric) same.push(i);
+  }
+  if (!same.length) return null;
+
+  const value = (i: number) => Math.max(data[i], data[i + 1], data[i + 2]);
+  same.sort((a, b) => value(a) - value(b));
+  const from = Math.floor(same.length * LIT_FROM);
+  const to = Math.max(from + 1, Math.floor(same.length * LIT_TO));
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  for (let k = from; k < to; k++) {
+    r += data[same[k]];
+    g += data[same[k] + 1];
+    b += data[same[k] + 2];
+  }
+  const n = to - from;
+  return {
+    rgb: { r: Math.round(r / n), g: Math.round(g / n), b: Math.round(b / n) },
+    coverage: same.length / (data.length / 4),
   };
 }
 

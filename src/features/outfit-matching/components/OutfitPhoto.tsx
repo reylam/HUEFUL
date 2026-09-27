@@ -9,6 +9,11 @@ interface OutfitPhotoProps {
   active: Piece;
   /** While true, a scan line sweeps the photo and markers are hidden. */
   scanning: boolean;
+  /**
+    Image that dims everything but the region the active piece was read from,
+    when it was found automatically. Omitted for a spot read at a marker.
+  */
+  spotlight?: string;
   onSelect: (piece: Piece) => void;
   onMove: (piece: Piece, point: Point) => void;
 }
@@ -24,16 +29,19 @@ const ARROWS: Record<string, [number, number] | undefined> = {
 };
 
 /*
-  The captured photo with a labeled marker on each spot that was read. The scan
-  can land off the clothes (an arm, the background), so the user corrects it:
-  tap the photo to move the active marker there, or focus a marker and nudge it
-  with the arrow keys. The active marker has a dashed ring, a non-color cue.
+  The captured photo with a labeled marker on each piece that was read. When
+  the body segmenter found a piece, the rest of the photo is dimmed so the user
+  sees the whole area the color came from. The scan can still land off the
+  clothes (an arm, the background), so the user corrects it: tap the photo to
+  move the active marker there, or focus a marker and nudge it with the arrow
+  keys. The active marker has a dashed ring, a non-color cue.
 */
 export function OutfitPhoto({
   url,
   points,
   active,
   scanning,
+  spotlight,
   onSelect,
   onMove,
 }: OutfitPhotoProps) {
@@ -70,6 +78,16 @@ export function OutfitPhoto({
           draggable={false}
           className="block max-h-[45vh] w-auto max-w-full select-none rounded-xl md:max-h-[70vh]"
         />
+
+        {!scanning && spotlight && (
+          <img
+            src={spotlight}
+            alt=""
+            aria-hidden
+            draggable={false}
+            className="pointer-events-none absolute inset-0 h-full w-full select-none rounded-xl"
+          />
+        )}
 
         {scanning ? (
           <span
