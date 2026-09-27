@@ -1,19 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { ComponentType } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import {
-  ChevronRight,
-  Grid2x2,
-  X,
-  Home,
-  ScanLine,
-  GitCompare,
-  Shirt,
-  Apple,
-  Eye,
-  Bookmark,
-  Settings,
-} from "lucide-react";
+import { ChevronRight, Grid2x2, X, Home, Settings } from "lucide-react";
 import { lenses } from "@/app/lenses";
 import logoText from "@/assets/images/logo_text.png";
 
@@ -52,15 +40,6 @@ interface NavItem {
   summary?: string;
 }
 
-const lensIcons: Record<string, IconType> = {
-  scan: ScanLine,
-  compare: GitCompare,
-  outfit: Shirt,
-  ripeness: Apple,
-  simulate: Eye,
-  saved: Bookmark,
-};
-
 const primaryPaths = new Set(["scan", "compare", "outfit"]);
 
 const items: NavItem[] = [
@@ -69,7 +48,7 @@ const items: NavItem[] = [
     to: `/dashboard/${lens.path}`,
     label: lens.label,
     navLabel: lens.navLabel,
-    Icon: lensIcons[lens.path] ?? ScanLine,
+    Icon: lens.Icon,
     primary: primaryPaths.has(lens.path),
     summary: lens.summary,
   })),

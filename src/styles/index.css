@@ -157,6 +157,17 @@ html {
   scroll-padding-top: 6rem;
 }
 
+/*
+  On phones the dashboard's tab bar sticks to the bottom, so keyboard focus and
+  scrolled-to elements must stop above it too, never hidden behind it (WCAG
+  2.4.11, focus not obscured).
+*/
+@media (width < 48rem) {
+  html {
+    scroll-padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
+}
+
 body {
   margin: 0;
   background: var(--color-surface);
@@ -187,6 +198,16 @@ body {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/*
+  The one exception: a step heading that tutorials focus in code so screen
+  readers announce the new step. It is not a control and sits at the top of
+  its step, so a ring around it only reads as a glitch. Every control keeps
+  its ring.
+*/
+.focus-heading:focus-visible {
+  outline: none;
 }
 
 /*
@@ -234,6 +255,25 @@ body {
 
 .sheet[open]::backdrop {
   animation: fade-in 0.2s ease-out both;
+}
+
+/*
+  The welcome tour: a bottom sheet on phones with the same motion as the More
+  sheet, and a centered card from md up that fades and rises instead, since
+  sliding up from the bottom edge reads wrong for a centered dialog.
+*/
+.tour-sheet[open] {
+  animation: sheet-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.tour-sheet[open]::backdrop {
+  animation: fade-in 0.2s ease-out both;
+}
+
+@media (width >= 48rem) {
+  .tour-sheet[open] {
+    animation: page-in 0.22s ease-out both;
+  }
 }
 
 /*

@@ -1,14 +1,5 @@
-import type { ComponentType } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  ScanLine,
-  GitCompare,
-  Shirt,
-  Apple,
-  Eye,
-  Bookmark,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { lenses } from "@/app/lenses";
 import { useAuth } from "@/stores/auth";
 import { useSavedColors } from "@/stores/saved-colors";
@@ -18,17 +9,6 @@ import { StateTag } from "@/shared/ui/StateTag";
 import { QuickNamer } from "./components/QuickNamer";
 import { ProfileQuickSet } from "./components/ProfileQuickSet";
 import { RecentColors } from "./components/RecentColors";
-
-type IconType = ComponentType<{ size?: number; "aria-hidden"?: boolean; className?: string }>;
-
-const lensIcons: Record<string, IconType> = {
-  scan: ScanLine,
-  compare: GitCompare,
-  outfit: Shirt,
-  ripeness: Apple,
-  simulate: Eye,
-  saved: Bookmark,
-};
 
 /*
   The dashboard home ("/dashboard"). More than a menu: it does something useful
@@ -95,7 +75,7 @@ export function DashboardHome() {
             width still looks deliberate. */}
         <ul className="fill-last-odd grid grid-cols-2 gap-3">
           {rest.map((lens, i) => {
-            const Icon = lensIcons[lens.path] ?? ScanLine;
+            const Icon = lens.Icon;
             return (
               <li key={lens.path}>
                 <Reveal delay={Math.min(i * 0.05, 0.25)}>
@@ -136,7 +116,7 @@ export function DashboardHome() {
 }
 
 function FeaturedTool({ lens }: { lens: (typeof lenses)[number] }) {
-  const Icon = lensIcons[lens.path] ?? ScanLine;
+  const Icon = lens.Icon;
   return (
     <Link
       to={`/dashboard/${lens.path}`}

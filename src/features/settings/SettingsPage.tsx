@@ -8,28 +8,28 @@ import {
   Type,
   Contrast,
   Check,
+  CircleHelp,
 } from "lucide-react";
 import { useAuth } from "@/stores/auth";
-import { useVisionProfile, CVD_PROFILES } from "@/stores/vision-profile";
-import type { VisionProfileId } from "@/stores/vision-profile";
+import { WELCOME_TOUR, useOnboarding } from "@/stores/onboarding";
 import { usePreferences } from "@/stores/preferences";
 import type { ThemePreference } from "@/stores/preferences";
 import { Button } from "@/shared/ui/Button";
 import { BrandMark } from "@/shared/ui/BrandMark";
+import { VisionProfilePicker } from "@/shared/ui/VisionProfilePicker";
 
 /*
   Settings, kept simple and honest. Appearance picks the theme: Light is the
   default, Dark is the low-glare option, System follows the OS. Accessibility toggles
   are real: they persist and apply app-wide via the preferences store. Vision
-  profile changes how tools phrase explanations. Account shows the local stub
-  session.
+  profile changes how tools phrase explanations. Help replays the welcome tour.
+  Account shows the local stub session.
 */
 export function SettingsPage() {
   const navigate = useNavigate();
   const user = useAuth((s) => s.user);
   const signOut = useAuth((s) => s.signOut);
-  const profile = useVisionProfile((s) => s.profile);
-  const setProfile = useVisionProfile((s) => s.setProfile);
+  const replayTour = useOnboarding((s) => s.replay);
 
   const prefs = usePreferences();
 
@@ -98,40 +98,22 @@ export function SettingsPage() {
         title="Vision profile"
         description="Tell us how you see color so tools can tailor their explanations."
       >
-        <fieldset className="flex flex-col gap-2">
-          <legend className="sr-only">Choose your vision profile</legend>
-          {CVD_PROFILES.map((option) => {
-            const selected = option.id === profile;
-            return (
-              <label
-                key={option.id}
-                className={[
-                  "flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-colors",
-                  selected
-                    ? "border-primary bg-surface"
-                    : "border-border bg-surface-raised hover:bg-surface",
-                ].join(" ")}
-              >
-                <input
-                  type="radio"
-                  name="vision-profile"
-                  value={option.id}
-                  checked={selected}
-                  onChange={() => setProfile(option.id as VisionProfileId)}
-                  className="mt-1 h-4 w-4 accent-[var(--color-primary)]"
-                />
-                <span>
-                  <span className="block font-medium text-text">
-                    {option.label}
-                  </span>
-                  <span className="block text-sm text-text-muted">
-                    {option.note}
-                  </span>
-                </span>
-              </label>
-            );
-          })}
-        </fieldset>
+        <VisionProfilePicker legend="Choose your vision profile" />
+      </Section>
+
+      {/* Help. */}
+      <Section
+        title="Help"
+        description="See the short tour of Hueful again: how answers read, your color vision, and the tools."
+      >
+        <Button
+          variant="ghost"
+          onClick={() => replayTour(WELCOME_TOUR)}
+          className="self-start"
+        >
+          <CircleHelp size={18} aria-hidden />
+          Replay welcome tour
+        </Button>
       </Section>
 
       {/* Account. */}

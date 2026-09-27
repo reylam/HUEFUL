@@ -1,5 +1,7 @@
 import { lazy } from "react";
 import type { ComponentType } from "react";
+import { Apple, Bookmark, Eye, GitCompare, ScanLine, Shirt } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 /*
   The lens registry: the single source of truth for the dashboard's tools.
@@ -19,6 +21,8 @@ export interface Lens {
   label: string;
   /** Short tab label; keep it tiny for the bottom nav. */
   navLabel: string;
+  /** One icon per lens, shared by the nav, the home grid, and the welcome tour. */
+  Icon: LucideIcon;
   /** One plain sentence describing what the lens does, used on the home grid. */
   summary: string;
   /**
@@ -36,6 +40,7 @@ export const lenses: Lens[] = [
     path: "scan",
     label: "Color Scanner",
     navLabel: "Scan",
+    Icon: ScanLine,
     summary:
       "Sample a color and get its plain-language name with a CVD-safe breakdown.",
     state: "ready",
@@ -49,6 +54,7 @@ export const lenses: Lens[] = [
     path: "compare",
     label: "Color Compare",
     navLabel: "Compare",
+    Icon: GitCompare,
     summary:
       "Check whether two colors are actually distinguishable, for you and across CVD types.",
     state: "ready",
@@ -62,8 +68,9 @@ export const lenses: Lens[] = [
     path: "outfit",
     label: "Outfit Matching",
     navLabel: "Outfit",
+    Icon: Shirt,
     summary:
-      "See whether two garments clash or go together, described in words, not just swatches.",
+      "Snap your outfit to see if it goes together, with suggestions in words, not just swatches.",
     state: "ready",
     Component: lazy(() =>
       import("@/features/outfit-matching").then((m) => ({
@@ -75,6 +82,7 @@ export const lenses: Lens[] = [
     path: "ripeness",
     label: "Food Ripeness",
     navLabel: "Ripeness",
+    Icon: Apple,
     summary:
       "Judge how ripe produce is from its color, with labels and icons, never color alone.",
     state: "ready",
@@ -88,6 +96,7 @@ export const lenses: Lens[] = [
     path: "simulate",
     label: "Vision Simulator",
     navLabel: "Simulate",
+    Icon: Eye,
     summary:
       "See how a color shifts under protanopia, deuteranopia, and tritanopia.",
     state: "ready",
@@ -101,6 +110,7 @@ export const lenses: Lens[] = [
     path: "saved",
     label: "Saved Colors",
     navLabel: "Saved",
+    Icon: Bookmark,
     summary: "Keep colors you named so you can recognize them again later.",
     state: "ready",
     Component: lazy(() =>

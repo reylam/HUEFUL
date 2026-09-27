@@ -61,7 +61,7 @@ const groups: { id: string; label: string; blurb: string; items: Feature[] }[] =
         path: "outfit",
         Icon: Shirt,
         name: "Outfit Matching",
-        text: "See whether two garments clash or go together, described in words, not just swatches.",
+        text: "Take a photo of your outfit and find out whether it goes together, with suggestions in words, not just swatches.",
       },
     ],
   },

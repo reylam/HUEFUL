@@ -1,6 +1,7 @@
-import { lazy, useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
+import { WELCOME_TOUR, useOnboarding } from "@/stores/onboarding";
 import { useApplyPreferences } from "@/stores/preferences";
 import { PublicLayout } from "./layouts/PublicLayout";
 import { DashboardLayout } from "./layouts/DashboardLayout";
@@ -49,6 +50,29 @@ const SettingsPage = lazy(() =>
 const NotFoundPage = lazy(() =>
   import("@/features/not-found").then((m) => ({ default: m.NotFoundPage })),
 );
+const WelcomeTour = lazy(() =>
+  import("@/features/welcome-tour").then((m) => ({ default: m.WelcomeTour })),
+);
+
+// Sign in and sign up are tasks in progress; the tour waits for the next page.
+const NO_TOUR_PATHS = new Set(["/login", "/register"]);
+
+/*
+  Opens the welcome tour on a visitor's first page, or when Settings asks to
+  replay it. Lazy, so returning visitors never download it.
+*/
+function WelcomeTourGate() {
+  const { pathname } = useLocation();
+  const open = useOnboarding(
+    (s) => s.replaying === WELCOME_TOUR || !s.done[WELCOME_TOUR],
+  );
+  if (!open || NO_TOUR_PATHS.has(pathname)) return null;
+  return (
+    <Suspense fallback={null}>
+      <WelcomeTour />
+    </Suspense>
+  );
+}
 
 export function App() {
   // Apply saved accessibility preferences (reduced motion, larger text, higher
@@ -94,6 +118,8 @@ export function App() {
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+
+      <WelcomeTourGate />
 
       <Toaster
         position={isMobile ? "top-center" : "bottom-center"}

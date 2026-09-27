@@ -1,14 +1,14 @@
 import { useCallback, useId, useRef, useState } from "react";
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, ReactNode } from "react";
 import Webcam from "react-webcam";
 import { Camera, Upload, Scan, X } from "lucide-react";
 import { Button } from "./Button";
 
 /*
   Shared capture surface for the tools that read pixels from an image: Color
-  Scanner, Food Ripeness, Vision Simulator. It owns the camera/upload UX so each
-  tool only cares about the pixels it gets back, and the interaction stays
-  identical across the app (one visual language).
+  Scanner, Food Ripeness, Outfit Matching, Vision Simulator. It owns the
+  camera/upload UX so each tool only cares about the pixels it gets back, and
+  the interaction stays identical across the app (one visual language).
 
   Behavior and accessibility:
   - Opt-in camera: the hardware is only touched when the user presses Start,
@@ -71,12 +71,18 @@ interface CameraUploadProps {
   onCapture: (result: CaptureResult) => void;
   /** Verb shown on the capture button while the camera is live. */
   captureLabel?: string;
+  /** A tall 3:4 frame, for upright subjects like a full outfit. */
+  portrait?: boolean;
+  /** Replaces the center target with a tool-specific framing guide. */
+  guide?: ReactNode;
   className?: string;
 }
 
 export function CameraUpload({
   onCapture,
   captureLabel = "Capture",
+  portrait = false,
+  guide,
   className,
 }: CameraUploadProps) {
   const regionId = useId();
@@ -116,7 +122,10 @@ export function CameraUpload({
     <div className={className}>
       <div
         aria-labelledby={regionId}
-        className="relative aspect-square w-full overflow-hidden rounded-card border border-border bg-surface-sunken sm:aspect-[4/3]"
+        className={[
+          "relative w-full overflow-hidden rounded-card border border-border bg-surface-sunken",
+          portrait ? "aspect-[3/4]" : "aspect-square sm:aspect-[4/3]",
+        ].join(" ")}
       >
         <span id={regionId} className="sr-only">
           Camera preview
@@ -143,9 +152,12 @@ export function CameraUpload({
               <span className="absolute right-0 top-0 h-6 w-6 rounded-tr-lg border-r-2 border-t-2 border-white/90" />
               <span className="absolute bottom-0 left-0 h-6 w-6 rounded-bl-lg border-b-2 border-l-2 border-white/90" />
               <span className="absolute bottom-0 right-0 h-6 w-6 rounded-br-lg border-b-2 border-r-2 border-white/90" />
-              <span className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_2px_rgba(0,0,0,0.5)]" />
+              {!guide && (
+                <span className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_2px_rgba(0,0,0,0.5)]" />
+              )}
               <span className="absolute inset-x-0 top-0 h-0.5 bg-accent shadow-[0_0_8px_2px] shadow-accent/50 motion-safe:animate-scan-line motion-reduce:hidden" />
             </span>
+            {guide}
           </>
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center text-text-muted">
