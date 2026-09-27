@@ -3,6 +3,8 @@ import type { ComponentType } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { ChevronRight, Grid2x2, X, Home, Settings } from "lucide-react";
 import { lenses } from "@/app/lenses";
+import { useAuth } from "@/stores/auth";
+import { levelFromXp, levelTitle, useProgress } from "@/stores/progress";
 import logoText from "@/assets/images/logo_text.png";
 
 /*
@@ -203,15 +205,85 @@ export function DashboardBottomNav() {
   );
 }
 
+/*
+  A single side-rail item. The active state is carried three ways so it never
+  depends on color: a filled pill, a left accent bar, and a tinted icon chip,
+  plus heavier text. Hover lifts the icon chip and label a touch. The chip gives
+  each icon a consistent, framed home so the rail reads as a considered set
+  rather than loose glyphs.
+*/
+function SideNavItem({ item }: { item: NavItem }) {
+  return (
+    <NavLink
+      to={item.to}
+      end={item.to === "/dashboard"}
+      className={({ isActive }) =>
+        [
+          "group relative flex min-h-11 items-center gap-3 rounded-xl py-2 pl-3 pr-2 text-sm transition-colors",
+          isActive
+            ? "bg-surface font-semibold text-text"
+            : "font-medium text-text-muted hover:bg-surface hover:text-text",
+        ].join(" ")
+      }
+    >
+      {({ isActive }) => (
+        <>
+          {/* Left accent bar: a non-color cue, present only when active. */}
+          <span
+            aria-hidden
+            className={[
+              "absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary transition-opacity",
+              isActive ? "opacity-100" : "opacity-0",
+            ].join(" ")}
+          />
+          <span
+            aria-hidden
+            className={[
+              "grid h-9 w-9 shrink-0 place-items-center rounded-lg transition-colors",
+              isActive
+                ? "bg-primary text-primary-foreground"
+                : "bg-surface-sunken text-text-muted group-hover:text-primary",
+            ].join(" ")}
+          >
+            <item.Icon size={18} />
+          </span>
+          <span className="min-w-0 flex-1 truncate">{item.label}</span>
+          <ChevronRight
+            size={16}
+            aria-hidden
+            className={[
+              "shrink-0 transition-all",
+              isActive
+                ? "text-primary opacity-100"
+                : "text-text-muted opacity-0 group-hover:translate-x-0.5 group-hover:opacity-100",
+            ].join(" ")}
+          />
+        </>
+      )}
+    </NavLink>
+  );
+}
+
 export function DashboardSideNav() {
+  const homeItem = items[0];
+  const toolItems = items.filter(
+    (i) => i.to !== "/dashboard" && i.to !== "/dashboard/settings",
+  );
+  const settingsItem = items.find((i) => i.to === "/dashboard/settings");
+
+  const name = useAuth((s) => s.user?.name);
+  const xp = useProgress((s) => s.xp);
+  const { level, intoLevel, levelSpan } = levelFromXp(xp);
+  const pct = Math.round((intoLevel / levelSpan) * 100);
+
   return (
     <nav
       aria-label="Sections"
-      className="hidden w-60 shrink-0 border-r border-border bg-surface-raised px-3 py-6 md:sticky md:top-0 md:block md:h-dvh md:self-start md:overflow-y-auto"
+      className="hidden w-64 shrink-0 flex-col border-r border-border bg-surface-raised px-3 py-5 md:sticky md:top-0 md:flex md:h-dvh md:self-start md:overflow-y-auto"
     >
       <NavLink
         to="/"
-        className="flex items-center px-3 pb-6"
+        className="flex items-center rounded-lg px-3 pb-5 pt-1"
         aria-label="HUEFUL home"
       >
         <img
@@ -222,28 +294,55 @@ export function DashboardSideNav() {
           className="brand-logo h-8 w-auto"
         />
       </NavLink>
+
       <ul className="flex flex-col gap-1">
-        {items.map((item) => (
+        <li>
+          <SideNavItem item={homeItem} />
+        </li>
+      </ul>
+
+      {/* Tools group: a quiet label gives the rail hierarchy instead of one
+          long undifferentiated list. */}
+      <p className="px-3 pb-1.5 pt-5 text-xs font-semibold uppercase tracking-wider text-text-muted">
+        Tools
+      </p>
+      <ul className="flex flex-col gap-1">
+        {toolItems.map((item) => (
           <li key={item.to}>
-            <NavLink
-              to={item.to}
-              end={item.to === "/dashboard"}
-              className={({ isActive }) =>
-                [
-                  "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium",
-                  "border-l-2 transition-colors",
-                  isActive
-                    ? "border-primary bg-surface text-text"
-                    : "border-transparent text-text-muted hover:bg-surface",
-                ].join(" ")
-              }
-            >
-              <item.Icon size={20} aria-hidden />
-              <span>{item.label}</span>
-            </NavLink>
+            <SideNavItem item={item} />
           </li>
         ))}
       </ul>
+
+      {/* Settings + a level footer pinned to the bottom, so the rail has a base
+          and the progress system has a persistent, quiet home. */}
+      <div className="mt-auto flex flex-col gap-3 pt-6">
+        {settingsItem && (
+          <ul>
+            <li>
+              <SideNavItem item={settingsItem} />
+            </li>
+          </ul>
+        )}
+
+        <div className="rounded-2xl border border-border bg-surface p-3">
+          <div className="flex items-center justify-between gap-2">
+            <span className="truncate text-sm font-semibold text-text">
+              {name ? name : "Guest"}
+            </span>
+            <span className="shrink-0 rounded-full bg-surface-sunken px-2 py-0.5 text-xs font-semibold text-text-muted">
+              Lv {level}
+            </span>
+          </div>
+          <p className="mt-0.5 text-xs text-text-muted">{levelTitle(level)}</p>
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface-sunken">
+            <div
+              className="h-full rounded-full bg-primary transition-[width] duration-500"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        </div>
+      </div>
     </nav>
   );
 }
